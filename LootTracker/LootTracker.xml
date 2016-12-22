@@ -1,0 +1,13 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+<script file="LootTracker.lua"/>
+<Frame name="LootTrackerFrame" parent="UIParent" hidden="true">
+	<Scripts>
+		<OnLoad>
+			LootTracker_OnLoad();
+		</OnLoad>
+		<OnEvent>
+			LootTracker_OnEvent();
+		</OnEvent>
+	</Scripts>
+</Frame>
+</Ui>
