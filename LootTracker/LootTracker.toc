@@ -1,7 +1,8 @@
 ## Title: LootTracker
-## Notes: LootTracker
-## Version: 1.0.0
-## Author: Luise
+## Notes: Tracks 
+## Version: 0.2.1
+## Author: |cff02bf02Luise|r
 ## Interface: 11200
-## SavedVariables: LootTrackerDB, LootTrackerOptions
+## SavedVariables: LootTrackerDB
+## SavedVariablesPerCharacter: LootTrackerOptions
 LootTracker.xml
