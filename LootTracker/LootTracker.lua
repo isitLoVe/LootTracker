@@ -24,6 +24,9 @@ function LootTracker_OnLoad()
 	DEFAULT_CHAT_FRAME:AddMessage(string.format("LootTracker v%s by %s", GetAddOnMetadata("LootTracker", "Version"), GetAddOnMetadata("LootTracker", "Author")));
     this:RegisterEvent("VARIABLES_LOADED");
     this:RegisterEvent("CHAT_MSG_LOOT")
+	--CHAT_MSG_LOOT examples:
+	--You receive loot: |cffffffff|Hitem:769:0:0:0|h[Chunk of Boar Meat]|h|r.
+	--Luise receives loot: |cffffffff|Hitem:769:0:0:0|h[Chunk of Boar Meat]|h|r.
     
 	SlashCmdList["LootTracker"] = LootTracker_SlashCommand;
 	SLASH_LootTracker1 = "/loottracker";
@@ -34,6 +37,7 @@ function LootTracker_OnLoad()
 	
 	LootTracker_pattern_looter = "^([^%s]+) receive" 
 	LootTracker_pattern_loot = "%[(.+)]"
+	LootTracker_pattern_itemid = "item:(%d+)"
 	LootTracker_pattern_rarity = "(.+)|c(.+)|H"
  	you = "You"
 	
@@ -66,30 +70,36 @@ function LootTracker_OnEvent()
 		--extract the loot
 		local _, _, loot = string.find(arg1, LootTracker_pattern_loot)
 		
+		--extract the item id
+		local _, _, itemid = string.find(arg1, LootTracker_pattern_itemid)
+
 		--extract rarity
 		local _, _, _, rarity = string.find(arg1, LootTracker_pattern_rarity)
 
 		--check rarity
 		if rarity == LootTracker_color_common and LootTrackerOptions["common"] == true then
-			LootTracker_AddtoDB ( looter, loot )
+			LootTracker_AddtoDB ( looter, loot, itemid)
 		elseif rarity == LootTracker_color_uncommon and LootTrackerOptions["uncommon"] == true then
-			LootTracker_AddtoDB ( looter, loot )
+			LootTracker_AddtoDB ( looter, loot, itemid)
 		elseif rarity == LootTracker_color_rare and LootTrackerOptions["rare"] == true then
-			LootTracker_AddtoDB ( looter, loot )
+			LootTracker_AddtoDB ( looter, loot, itemid)
 		elseif rarity == LootTracker_color_epic and LootTrackerOptions["epic"] == true then
-			LootTracker_AddtoDB ( looter, loot )
+			LootTracker_AddtoDB ( looter, loot, itemid)
 		elseif rarity == LootTracker_color_legendary and LootTrackerOptions["legendary"] == true then
-			LootTracker_AddtoDB ( looter, loot )
+			LootTracker_AddtoDB ( looter, loot, itemid)
 		end
 	end
 end
 
-function LootTracker_AddtoDB(looter, loot)
+function LootTracker_AddtoDB(looter, loot, itemid)
 
 	timestamp = date("%y-%m-%d %H:%M:%S")
-	
+	zonename = GetRealZoneText()
+		
+
 	if looter and loot and timestamp and timestamp then
 		DEFAULT_CHAT_FRAME:AddMessage(timestamp .. " " .. looter .. " --> " .. loot)
+		
 		if getn(LootTrackerDB) == 0 then
 			LootTrackerDB[1] = timestamp .. " " .. looter .. " --> " .. loot
 		else
