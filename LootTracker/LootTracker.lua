@@ -46,7 +46,21 @@ function LootTracker_OnLoad()
 	LootTracker_color_rare = "ff0070dd"
 	LootTracker_color_epic = "ffa335ee"
 	LootTracker_color_legendary = "ffff8000"
-
+	
+	LootTracker_dbfield_playername = "playername"
+	LootTracker_dbfield_itemname = "itemname"
+	LootTracker_dbfield_itemid = "itemid"
+	LootTracker_dbfield_rarity = "rarity"
+	LootTracker_dbfield_timestamp = "timestamp"
+	LootTracker_dbfield_zone = "zone"
+	LootTracker_dbfield_oldplayergp = "oldplayergp"
+	LootTracker_dbfield_gpcost = "gpcost"
+	LootTracker_dbfield_newplayergp = "newgp"
+	LootTracker_dbfield_res1 = "res1"
+	LootTracker_dbfield_res2 = "res2"
+	LootTracker_dbfield_res3 = "res3"
+	LootTracker_dbfield_res4 = "res4"
+	LootTracker_dbfield_res5 = "res5"
 end
 
 function LootTracker_OnEvent()
@@ -74,25 +88,26 @@ function LootTracker_OnEvent()
 
 		--check rarity and add itemname to db
 		if rarity == LootTracker_color_common and LootTrackerOptions["common"] == true then
-			LootTracker_AddtoDB ( playername, itemname, itemid)
+			LootTracker_AddtoDB ( playername, itemname, itemid, common)
 		elseif rarity == LootTracker_color_uncommon and LootTrackerOptions["uncommon"] == true then
-			LootTracker_AddtoDB ( playername, itemname, itemid)
+			LootTracker_AddtoDB ( playername, itemname, itemid, uncommon)
 		elseif rarity == LootTracker_color_rare and LootTrackerOptions["rare"] == true then
-			LootTracker_AddtoDB ( playername, itemname, itemid)
+			LootTracker_AddtoDB ( playername, itemname, itemid, rare)
 		elseif rarity == LootTracker_color_epic and LootTrackerOptions["epic"] == true then
-			LootTracker_AddtoDB ( playername, itemname, itemid)
+			LootTracker_AddtoDB ( playername, itemname, itemid, epic)
 		elseif rarity == LootTracker_color_legendary and LootTrackerOptions["legendary"] == true then
-			LootTracker_AddtoDB ( playername, itemname, itemid)
+			LootTracker_AddtoDB ( playername, itemname, itemid, legendary)
 		end
 	end
 end
 
-function LootTracker_AddtoDB(playername, itemname, itemid)
+function LootTracker_AddtoDB(playername, itemname, itemid, rarity)
 	
 	--get the metadata
-	timestamp = date("%y-%m-%d")
+	timestamp_raidid = date("%y-%m-%d")
+	timestamp_detail = date("%y-%m-%d %h:%m:%s")
 	zonename = GetRealZoneText();
-	raidid = timestamp .. " " .. zonename
+	raidid = timestamp_raidid .. " " .. zonename
 	
 
 	--check if db is empty
@@ -102,19 +117,42 @@ function LootTracker_AddtoDB(playername, itemname, itemid)
 	if LootTrackerDB[raidid] == nil then
 		LootTrackerDB[raidid] = {}
 	end
-	if LootTrackerDB[raidid][playername] == nil then
-		LootTrackerDB[raidid][playername] = {}
-	end
-	if LootTrackerDB[raidid][playername][itemid] == nil then
-		LootTrackerDB[raidid][playername][itemid] = {}
-	end
 	
 	--import the itemname into the db
-	if playername and itemname and zonename and timestamp and itemid then
+	if playername and itemname and itemid and rarity and timestamp_detail and zonename then
 		DEFAULT_CHAT_FRAME:AddMessage(timestamp .. " " .. playername .. " " .. itemname .. " " .. itemid .. " " .. zonename)
 		
-		LootTrackerDB[raidid][playername][itemid] =	itemname
-
+		if getn(LootTrackerDB[raidid][n]) == 0 then
+			LootTrackerDB[raidid][1][LootTracker_dbfield_playername] = playername
+			LootTrackerDB[raidid][1][LootTracker_dbfield_itemname] = itemname
+			LootTrackerDB[raidid][1][LootTracker_dbfield_itemid] = itemid
+			LootTrackerDB[raidid][1][LootTracker_dbfield_rarity] = rarity
+			LootTrackerDB[raidid][1][LootTracker_dbfield_timestamp] = timestamp_detail
+			LootTrackerDB[raidid][1][LootTracker_dbfield_zone] = zonename
+			LootTrackerDB[raidid][1][LootTracker_dbfield_oldplayergp] = nil
+			LootTrackerDB[raidid][1][LootTracker_dbfield_gpcost] = nil
+			LootTrackerDB[raidid][1][LootTracker_dbfield_newplayergp] = nil
+			LootTrackerDB[raidid][1][LootTracker_dbfield_res1] = nil
+			LootTrackerDB[raidid][1][LootTracker_dbfield_res2] = nil
+			LootTrackerDB[raidid][1][LootTracker_dbfield_res3] = nil
+			LootTrackerDB[raidid][1][LootTracker_dbfield_res4] = nil
+			LootTrackerDB[raidid][1][LootTracker_dbfield_res5] = nil
+		else
+			LootTrackerDB[raidid]getn(LootTrackerDB[raidid][n])+1[LootTracker_dbfield_playername] = playername
+			LootTrackerDB[raidid]getn(LootTrackerDB[raidid][n])+1[LootTracker_dbfield_itemname] = itemname
+			LootTrackerDB[raidid]getn(LootTrackerDB[raidid][n])+1[LootTracker_dbfield_itemid] = itemid
+			LootTrackerDB[raidid]getn(LootTrackerDB[raidid][n])+1[LootTracker_dbfield_rarity] = rarity
+			LootTrackerDB[raidid]getn(LootTrackerDB[raidid][n])+1[LootTracker_dbfield_timestamp] = timestamp_detail
+			LootTrackerDB[raidid]getn(LootTrackerDB[raidid][n])+1[LootTracker_dbfield_zone] = zonename
+			LootTrackerDB[raidid]getn(LootTrackerDB[raidid][n])+1[LootTracker_dbfield_oldplayergp] = nil
+			LootTrackerDB[raidid]getn(LootTrackerDB[raidid][n])+1[LootTracker_dbfield_gpcost] = nil
+			LootTrackerDB[raidid]getn(LootTrackerDB[raidid][n])+1[LootTracker_dbfield_newplayergp] = nil
+			LootTrackerDB[raidid]getn(LootTrackerDB[raidid][n])+1[LootTracker_dbfield_res1] = nil
+			LootTrackerDB[raidid]getn(LootTrackerDB[raidid][n])+1[LootTracker_dbfield_res2] = nil
+			LootTrackerDB[raidid]getn(LootTrackerDB[raidid][n])+1[LootTracker_dbfield_res3] = nil
+			LootTrackerDB[raidid]getn(LootTrackerDB[raidid][n])+1[LootTracker_dbfield_res4] = nil
+			LootTrackerDB[raidid]getn(LootTrackerDB[raidid][n])+1[LootTracker_dbfield_res5] = nil
+		end
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("LootTracker Debug: Error in LootTracker_AddtoDB")
 	end
