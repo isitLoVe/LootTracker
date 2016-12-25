@@ -35,8 +35,8 @@ function LootTracker_OnLoad()
 	local MSG_PREFIX = "LootTracker"
 	
 	
-	LootTracker_pattern_looter = "^([^%s]+) receive" 
-	LootTracker_pattern_loot = "%[(.+)]"
+	LootTracker_pattern_playername = "^([^%s]+) receive" 
+	LootTracker_pattern_itemname = "%[(.+)]"
 	LootTracker_pattern_itemid = "item:(%d+)"
 	LootTracker_pattern_rarity = "(.+)|c(.+)|H"
  	you = "You"
@@ -55,20 +55,16 @@ function LootTracker_OnEvent()
 		LootTracker_Initialize();
 	elseif event == "CHAT_MSG_LOOT" and arg1 and LootTrackerOptions["enabled"] == true then
 		
-		if not LootTrackerDB then
-			LootTrackerDB = {}
-		end
-		
 		--extract the person who looted
-		local _, _, looter = string.find(arg1, LootTracker_pattern_looter)
-		if looter then
-			if looter == you then
-				looter = UnitName("player")
+		local _, _, playername = string.find(arg1, LootTracker_pattern_playername)
+		if playername then
+			if playername == you then
+				playername = UnitName("player")
 			end
 		end
 		
-		--extract the loot
-		local _, _, loot = string.find(arg1, LootTracker_pattern_loot)
+		--extract the itemname
+		local _, _, itemname = string.find(arg1, LootTracker_pattern_itemname)
 		
 		--extract the item id
 		local _, _, itemid = string.find(arg1, LootTracker_pattern_itemid)
@@ -76,43 +72,119 @@ function LootTracker_OnEvent()
 		--extract rarity
 		local _, _, _, rarity = string.find(arg1, LootTracker_pattern_rarity)
 
-		--check rarity
+		--check rarity and add itemname to db
 		if rarity == LootTracker_color_common and LootTrackerOptions["common"] == true then
-			LootTracker_AddtoDB ( looter, loot, itemid)
+			LootTracker_AddtoDB ( playername, itemname, itemid)
 		elseif rarity == LootTracker_color_uncommon and LootTrackerOptions["uncommon"] == true then
-			LootTracker_AddtoDB ( looter, loot, itemid)
+			LootTracker_AddtoDB ( playername, itemname, itemid)
 		elseif rarity == LootTracker_color_rare and LootTrackerOptions["rare"] == true then
-			LootTracker_AddtoDB ( looter, loot, itemid)
+			LootTracker_AddtoDB ( playername, itemname, itemid)
 		elseif rarity == LootTracker_color_epic and LootTrackerOptions["epic"] == true then
-			LootTracker_AddtoDB ( looter, loot, itemid)
+			LootTracker_AddtoDB ( playername, itemname, itemid)
 		elseif rarity == LootTracker_color_legendary and LootTrackerOptions["legendary"] == true then
-			LootTracker_AddtoDB ( looter, loot, itemid)
+			LootTracker_AddtoDB ( playername, itemname, itemid)
 		end
 	end
 end
 
-function LootTracker_AddtoDB(looter, loot, itemid)
+function LootTracker_AddtoDB(playername, itemname, itemid)
+	
+	--get the metadata
+	timestamp = date("%y-%m-%d")
+	zonename = GetRealZoneText();
+	raidid = timestamp .. " " .. zonename
+	
 
-	timestamp = date("%y-%m-%d %H:%M:%S")
-	zonename = GetRealZoneText()
+	--check if db is empty
+	if LootTrackerDB == nil then
+		LootTrackerDB = {}
+	end
+	if LootTrackerDB[raidid] == nil then
+		LootTrackerDB[raidid] = {}
+	end
+	if LootTrackerDB[raidid][playername] == nil then
+		LootTrackerDB[raidid][playername] = {}
+	end
+	if LootTrackerDB[raidid][playername][itemid] == nil then
+		LootTrackerDB[raidid][playername][itemid] = {}
+	end
+	
+	--import the itemname into the db
+	if playername and itemname and zonename and timestamp and itemid then
+		DEFAULT_CHAT_FRAME:AddMessage(timestamp .. " " .. playername .. " " .. itemname .. " " .. itemid .. " " .. zonename)
 		
+		LootTrackerDB[raidid][playername][itemid] =	itemname
 
-	if looter and loot and timestamp and timestamp then
-		DEFAULT_CHAT_FRAME:AddMessage(timestamp .. " " .. looter .. " --> " .. loot)
-		
-		if getn(LootTrackerDB) == 0 then
-			LootTrackerDB[1] = timestamp .. " " .. looter .. " --> " .. loot
-		else
-			LootTrackerDB[getn(LootTrackerDB)+1] = timestamp .. " " .. looter .. " --> " .. loot
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("LootTracker Debug: Error in LootTracker_AddtoDB")
+	end
+end
+
+function LootTracker_Database(arg1)
+	if arg1 == "playername" then
+		DEFAULT_CHAT_FRAME:AddMessage("Dumping Database by playername:")
+		LootTrackerDB_sorted = LootTracker_SortDB("playername")
+		for _, key in pairs(LootTrackerDB_sorted) do
+			for playername,_ in pairs(LootTrackerDB) do
+				if key == playername then
+					for raidid, loot in pairs(LootTrackerDB[playername]) do
+						DEFAULT_CHAT_FRAME:AddMessage(playername.." --> "..loot.." "..raidid)
+					end 
+				end
+			end
+		end
+	elseif arg1 == "loot" then
+		LootTrackerDB_sorted = LootTracker_SortDB("loot")
+		for _, key in pairs(LootTrackerDB_sorted) do
+			for name,_ in pairs(LootTrackerDB) do
+				for tstamp, loot in pairs(LootTrackerDB[name]) do
+					if key == loot then
+						DEFAULT_CHAT_FRAME:AddMessage(loot.." --> "..name.." "..tstamp)
+					end
+				end 
+			end
+		end
+	elseif arg1 == "date" then
+		LootTrackerDB_sorted = LootTracker_SortDB("date")
+		for _, key in ipairs(LootTrackerDB_sorted) do
+			for name,_ in pairs(LootTrackerDB) do
+				for tstamp, loot in pairs(LootTrackerDB[name]) do
+					if key == tstamp then
+						DEFAULT_CHAT_FRAME:AddMessage(tstamp.." "..name.." --> "..loot)
+					end
+				end 
+			end
+		end
+	else
+		for name,_ in pairs(LootTrackerDB) do 
+			for tstamp, loot in pairs(LootTrackerDB[name]) do
+				DEFAULT_CHAT_FRAME:AddMessage(name.." --> "..loot.." "..tstamp)
+			end 
 		end
 	end
 end
 
-function LootTracker_Database()
-	DEFAULT_CHAT_FRAME:AddMessage("Dumping Database:")
-	for i in LootTrackerDB do 
-		DEFAULT_CHAT_FRAME:AddMessage(LootTrackerDB[i])
+function LootTracker_SortDB(arg1)
+	local sortedKeys = { }
+	if arg1 == "playername" then
+		for k, _ in pairs(LootTrackerDB[raidid][playername]) do 
+			table.insert(sortedKeys, k) 
+		end	
+	elseif arg1 == "loot" then
+		for k, _ in pairs(LootTrackerDB) do 
+			for l, _ in pairs(LootTrackerDB[k]) do
+				table.insert(sortedKeys, LootTrackerDB[k][l]) 
+			end
+		end
+	elseif arg1 == "date" then
+		for k, _ in pairs(LootTrackerDB) do 
+			for l, _ in pairs(LootTrackerDB[k]) do
+				table.insert(sortedKeys, l) 
+			end
+		end
 	end
+	table.sort(sortedKeys, function(a,b) return a<b end)
+	return sortedKeys
 end
 
 function LootTracker_SlashCommand(msg)
@@ -126,7 +198,7 @@ function LootTracker_SlashCommand(msg)
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9disable|r: disables loot tracking")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9toggle|r: toggles loot tracking")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9show|r: shows the current configuration")
-		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9sdatabase|r: shows the loot database")
+		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9database|r: shows the loot database")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9reset|r: resets the loot database")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9uncommon|r: toggles tracking uncommon loot")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9common|r: toggles tracking common loot")
@@ -239,7 +311,7 @@ function LootTracker_SlashCommand(msg)
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9disable|r: disables loot tracking")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9toggle|r: toggles loot tracking")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9show|r: shows the current configuration")
-		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9sdatabase|r: shows the loot database")
+		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9database|r: shows the loot database")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9reset|r: resets the loot database")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9uncommon|r: toggles tracking uncommon loot")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9common|r: toggles tracking common loot")
