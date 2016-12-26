@@ -54,7 +54,7 @@ function LootTracker_OnLoad()
 	LootTracker_dbfield_timestamp = "timestamp"
 	LootTracker_dbfield_zone = "zone"
 	LootTracker_dbfield_oldplayergp = "oldplayergp"
-	LootTracker_dbfield_gpcost = "gpcost"
+	LootTracker_dbfield_cost = "cost"
 	LootTracker_dbfield_newplayergp = "newgp"
 	LootTracker_dbfield_res1 = "res1"
 	LootTracker_dbfield_res2 = "res2"
@@ -134,7 +134,7 @@ function LootTracker_AddtoDB(playername, itemname, itemid, rarity)
 			LootTrackerDB[raidid][1][LootTracker_dbfield_timestamp] = timestamp_detail
 			LootTrackerDB[raidid][1][LootTracker_dbfield_zone] = zonename
 			LootTrackerDB[raidid][1][LootTracker_dbfield_oldplayergp] = nil
-			LootTrackerDB[raidid][1][LootTracker_dbfield_gpcost] = nil
+			LootTrackerDB[raidid][1][LootTracker_dbfield_cost] = nil
 			LootTrackerDB[raidid][1][LootTracker_dbfield_newplayergp] = nil
 			LootTrackerDB[raidid][1][LootTracker_dbfield_res1] = nil
 			LootTrackerDB[raidid][1][LootTracker_dbfield_res2] = nil
@@ -151,7 +151,7 @@ function LootTracker_AddtoDB(playername, itemname, itemid, rarity)
 			LootTrackerDB[raidid][lootid][LootTracker_dbfield_timestamp] = timestamp_detail
 			LootTrackerDB[raidid][lootid][LootTracker_dbfield_zone] = zonename
 			LootTrackerDB[raidid][lootid][LootTracker_dbfield_oldplayergp] = nil
-			LootTrackerDB[raidid][lootid][LootTracker_dbfield_gpcost] = nil
+			LootTrackerDB[raidid][lootid][LootTracker_dbfield_cost] = nil
 			LootTrackerDB[raidid][lootid][LootTracker_dbfield_newplayergp] = nil
 			LootTrackerDB[raidid][lootid][LootTracker_dbfield_res1] = nil
 			LootTrackerDB[raidid][lootid][LootTracker_dbfield_res2] = nil
@@ -287,7 +287,7 @@ function LootTracker_SlashCommand(msg)
 		if (LootTracker_BrowseFrame:IsVisible()) then
 			LootTracker_BrowseFrame:Hide()
 		else
-			LootTracker_RefreshBrowseList()
+			LootTracker_SearchBrowseList()
 		end
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("LootTracker DB is saved to: WTF\Account\ACCOUNTNAME\SavedVariables\LootTracker.lua")
@@ -311,6 +311,7 @@ end
 
 
 --GUI stuff
+--timestamp; Playername (mouseover ep/gp/ratio) ; itemname (mouseover item, color); gpcost; 
 function LootTracker_Main_OnShow()
 	--if (MI2BSave and MI2BSave.framepos_L and MI2BSave.framepos_T) then
 	--	this:SetPoint("TOPLEFT", "UIParent", "BOTTOMLEFT", MI2BSave.framepos_L, MI2BSave.framepos_T);
@@ -338,28 +339,35 @@ function LootTracker_Main_OnMouseUp(arg1)
 	end
 end
 
-function LootTracker_RefreshBrowseList()
+function LootTracker_SearchBrowseList()
 	ShowUIPanel(LootTracker_BrowseFrame, 1)
 	LootTracker_BrowseTable = {}
 	
 	--arg needed
-	local raidid = "16-12-25 Badlands"
+	local raidid = "16-12-26 Blackwing Lair"
 
 	local iNew = 1;
 	for index in LootTrackerDB[raidid] do
-		DEFAULT_CHAT_FRAME:AddMessage(index)
+		--DEFAULT_CHAT_FRAME:AddMessage(index)
 		
-		DEFAULT_CHAT_FRAME:AddMessage(LootTrackerDB[raidid][index][LootTracker_dbfield_itemid])
-		DEFAULT_CHAT_FRAME:AddMessage(LootTrackerDB[raidid][index][LootTracker_dbfield_itemname])
+		--DEFAULT_CHAT_FRAME:AddMessage(LootTrackerDB[raidid][index][LootTracker_dbfield_itemid])
+		--DEFAULT_CHAT_FRAME:AddMessage(LootTrackerDB[raidid][index][LootTracker_dbfield_itemname])
 
 		
 		LootTracker_BrowseTable[iNew] = {}
-		
-		LootTracker_BrowseTable[iNew].itemid = LootTrackerDB[raidid][index][LootTracker_dbfield_itemid]
+		LootTracker_BrowseTable[iNew].timestamp = LootTrackerDB[raidid][index][LootTracker_dbfield_timestamp]
+		LootTracker_BrowseTable[iNew].playername = LootTrackerDB[raidid][index][LootTracker_dbfield_playername]
 		LootTracker_BrowseTable[iNew].itemname = LootTrackerDB[raidid][index][LootTracker_dbfield_itemname]
+		LootTracker_BrowseTable[iNew].cost = LootTrackerDB[raidid][index][LootTracker_dbfield_cost]
+		
+		
+		
 		iNew = iNew + 1;
 	end
-
+	
+	--set GUI Total Loots (per Raid)
+	getglobal("LootTracker_TotalLootText"):SetText("Raid: " .. raidid .. ":")
+	getglobal("LootTracker_TotalLootTextValue"):SetText(iNew-1 .. " item(s)")
 	
 	local line
 	
@@ -367,11 +375,19 @@ function LootTracker_RefreshBrowseList()
 		LootTracker_BrowseTable.onePastEnd = 3;	
 	end
 	
-	for line=1, 3, 1 do
-	DEFAULT_CHAT_FRAME:AddMessage(LootTracker_BrowseTable[line].itemid)
-		getglobal("LootTracker_List"..line.."TextItemID"):SetText(LootTracker_BrowseTable[line].itemid);
-		getglobal("LootTracker_List"..line.."TextItemName"):SetText(LootTracker_BrowseTable[line].itemname);
-		getglobal("LootTracker_List"..line):Show();
+	--20 lines max in GUI LootTracker_List need scrol bar function
+	if iNew < 20 then
+		lineoffset = iNew-1
+	else
+		lineoffset = 20
+	end
+	
+	for line=1, lineoffset, 1 do
+		getglobal("LootTracker_List"..line.."TextTimestamp"):SetText(LootTracker_BrowseTable[line].timestamp)
+		getglobal("LootTracker_List"..line.."TextPlayername"):SetText(LootTracker_BrowseTable[line].playername)
+		getglobal("LootTracker_List"..line.."TextItemName"):SetText(LootTracker_BrowseTable[line].itemname)
+		getglobal("LootTracker_List"..line.."TextCost"):SetText(LootTracker_BrowseTable[line].cost)
+		getglobal("LootTracker_List"..line):Show()
 	end
 	
 end
