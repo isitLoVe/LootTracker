@@ -56,9 +56,9 @@
 		</Frames>
 		<Layers>
 			<Layer level="OVERLAY">
-				<FontString name="$parentTextItemID" inherits="GameFontNormalSmall" justifyH="RIGHT">
+				<FontString name="$parentTextTimestamp" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size>
-						<AbsDimension x="16" y="10"/>
+						<AbsDimension x="200" y="10"/>
 					</Size>
 					<Anchors>
 						<Anchor point="LEFT">
@@ -68,14 +68,38 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentTextItemName" inherits="GameFontNormalSmall" justifyH="LEFT">
+				<FontString name="$parentTextPlayername" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size>
-						<AbsDimension x="33" y="10"/>
+						<AbsDimension x="200" y="10"/>
 					</Size>
 					<Anchors>
 						<Anchor point="LEFT">
 							<Offset>
-								<AbsDimension x="180" y="0"/>
+								<AbsDimension x="200" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors> 
+				</FontString>
+				<FontString name="$parentTextItemName" inherits="GameFontNormalSmall" justifyH="LEFT">
+					<Size>
+						<AbsDimension x="300" y="10"/>
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT">
+							<Offset>
+								<AbsDimension x="400" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors> 
+				</FontString>
+				<FontString name="$parentTextCost" inherits="GameFontNormalSmall" justifyH="LEFT">
+					<Size>
+						<AbsDimension x="100" y="10"/>
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT">
+							<Offset>
+								<AbsDimension x="700" y="0"/>
 							</Offset>
 						</Anchor>
 					</Anchors> 
@@ -327,6 +351,244 @@
 							</Anchor>
 						</Anchors>
 					</Button>
+					<Button name="LootTracker_List4" inherits="LootTracker_ListButtonTemplate" id="4" hidden="true">
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LootTracker_List3" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="LootTracker_List5" inherits="LootTracker_ListButtonTemplate" id="5" hidden="true">
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LootTracker_List4" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="LootTracker_List6" inherits="LootTracker_ListButtonTemplate" id="6" hidden="true">
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LootTracker_List5" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="LootTracker_List7" inherits="LootTracker_ListButtonTemplate" id="7" hidden="true">
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LootTracker_List6" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="LootTracker_List8" inherits="LootTracker_ListButtonTemplate" id="8" hidden="true">
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LootTracker_List7" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="LootTracker_List9" inherits="LootTracker_ListButtonTemplate" id="9" hidden="true">
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LootTracker_List8" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="LootTracker_List10" inherits="LootTracker_ListButtonTemplate" id="10" hidden="true">
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LootTracker_List9" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="LootTracker_List11" inherits="LootTracker_ListButtonTemplate" id="11" hidden="true">
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LootTracker_List10" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="LootTracker_List12" inherits="LootTracker_ListButtonTemplate" id="12" hidden="true">
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LootTracker_List11" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="LootTracker_List13" inherits="LootTracker_ListButtonTemplate" id="13" hidden="true">
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LootTracker_List12" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="LootTracker_List14" inherits="LootTracker_ListButtonTemplate" id="14" hidden="true">
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LootTracker_List13" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="LootTracker_List15" inherits="LootTracker_ListButtonTemplate" id="15" hidden="true">
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LootTracker_List14" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="LootTracker_List16" inherits="LootTracker_ListButtonTemplate" id="16" hidden="true">
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LootTracker_List15" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="LootTracker_List17" inherits="LootTracker_ListButtonTemplate" id="17" hidden="true">
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LootTracker_List16" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="LootTracker_List18" inherits="LootTracker_ListButtonTemplate" id="18" hidden="true">
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LootTracker_List17" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="LootTracker_List19" inherits="LootTracker_ListButtonTemplate" id="19" hidden="true">
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LootTracker_List18" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<Button name="LootTracker_List20" inherits="LootTracker_ListButtonTemplate" id="20" hidden="true">
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="LootTracker_List19" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
 					<Button name="LootTracker_BrowseCloseButton" inherits="UIPanelButtonTemplate" text="CLOSE">
 						<Size>
 							<AbsDimension x="80" y="22"/>
@@ -344,7 +606,7 @@
 							</OnClick>
 						</Scripts>
 					</Button>
-					<Button name="LootTracker_ListRefreshButton" inherits="UIPanelButtonTemplate" text="REFRESH">
+					<Button name="LootTracker_ListSearchButton" inherits="UIPanelButtonTemplate" text="Search">
 						<Size>
 							<AbsDimension x="80" y="22"/>
 						</Size>
@@ -357,7 +619,7 @@
 						</Anchors>
 						<Scripts>
 							<OnClick>
-								LootTracker_RefreshBrowseList();
+								LootTracker_SearchBrowseList();
 							</OnClick>
 						</Scripts>
 					</Button>
@@ -366,7 +628,7 @@
 							<AbsDimension x="510" y="26"/>
 						</Size>
 						<Anchors>
-							<Anchor point="RIGHT" relativeTo="LootTracker_ListRefreshButton" relativePoint="LEFT">
+							<Anchor point="RIGHT" relativeTo="LootTracker_ListSearchButton" relativePoint="LEFT">
 								<Offset>
 									<AbsDimension x="0" y="-1"/>
 								</Offset>
@@ -382,7 +644,7 @@
 						</Backdrop>
 						<Layers>
 							<Layer level="OVERLAY">
-								<FontString name="LootTracker_TotalLootText" inherits="GameFontNormalSmall" text="Total Loots: ">
+								<FontString name="LootTracker_TotalLootText" inherits="GameFontNormalSmall" text="Raid:">
 									<Anchors>
 										<Anchor point="LEFT">
 											<Offset>
@@ -391,7 +653,7 @@
 										</Anchor>
 									</Anchors>
 								</FontString>
-								<FontString name="LootTracker_TotalLootTextValue" inherits="GameFontHighlightSmall" text="1337">
+								<FontString name="LootTracker_TotalLootTextValue" inherits="GameFontHighlightSmall" text="">
 									<Anchors>
 										<Anchor point="LEFT" relativeTo="LootTracker_TotalLootText" relativePoint="RIGHT">
 											<Offset>
@@ -405,12 +667,12 @@
 					</Frame>
 					<Frame name="MI2B_SortBar"> 
 						<Size>
-							<AbsDimension x="810" y="12" />
+							<AbsDimension x="805" y="13" />
 						</Size>
 						<Anchors>
 							<Anchor	point="TOPLEFT">
 								<Offset>
-									<AbsDimension x="23" y="-74" />
+									<AbsDimension x="24" y="-74" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -423,14 +685,14 @@
 							<OnLoad> this:SetBackdropColor(0.9, 0.9, 0.9, 0.9) </OnLoad>
 						</Scripts>
 						<Frames>
-							<Button name="LootTracker_ItemIDSort" inherits="LootTracker_SortButtonTemplate" text="ItemID">
+							<Button name="LootTracker_SortTimestamp" inherits="LootTracker_SortButtonTemplate" text="Timestamp">
 								<Size>
-									<AbsDimension x="24" y="14"/>
+									<AbsDimension x="200" y="14"/>
 								</Size>
 								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="LootTracker_List1TextItemID" relativePoint="TOPLEFT">
+									<Anchor point="BOTTOMLEFT" relativeTo="LootTracker_List1TextTimestamp" relativePoint="TOPLEFT">
 										<Offset>
-											<AbsDimension x="-2" y="2"/>
+											<AbsDimension x="0" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -439,14 +701,14 @@
 									</OnClick>
 								</Scripts>
 							</Button>
-							<Button name="LootTracker_ItemNameSort" inherits="LootTracker_SortButtonTemplate" text="ItemName">
+							<Button name="LootTracker_SortPlayername" inherits="LootTracker_SortButtonTemplate" text="Playername">
 								<Size>
-									<AbsDimension x="80" y="14"/>
+									<AbsDimension x="200" y="14"/>
 								</Size>
 								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="LootTracker_List1TextItemName" relativePoint="TOPLEFT">
+									<Anchor point="BOTTOMLEFT" relativeTo="LootTracker_List1TextPlayername" relativePoint="TOPLEFT">
 										<Offset>
-											<AbsDimension x="20" y="2"/>
+											<AbsDimension x="-5" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -455,8 +717,38 @@
 									</OnClick>
 								</Scripts>
 							</Button>						
-						
-						
+							<Button name="LootTracker_SortItemName" inherits="LootTracker_SortButtonTemplate" text="ItemName">
+								<Size>
+									<AbsDimension x="300" y="14"/>
+								</Size>
+								<Anchors>
+									<Anchor point="BOTTOMLEFT" relativeTo="LootTracker_List1TextItemName" relativePoint="TOPLEFT">
+										<Offset>
+											<AbsDimension x="-5" y="0"/>
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnClick>
+									</OnClick>
+								</Scripts>
+							</Button>						
+							<Button name="LootTracker_SortCost" inherits="LootTracker_SortButtonTemplate" text="Cost">
+								<Size>
+									<AbsDimension x="100" y="14"/>
+								</Size>
+								<Anchors>
+									<Anchor point="BOTTOMLEFT" relativeTo="LootTracker_List1TextCost" relativePoint="TOPLEFT">
+										<Offset>
+											<AbsDimension x="-5" y="0"/>
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnClick>
+									</OnClick>
+								</Scripts>
+							</Button>						
 						
 						</Frames>
 					</Frame>
