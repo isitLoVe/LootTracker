@@ -69,39 +69,43 @@ function LootTracker_OnEvent()
 		LootTracker_Initialize();
 	elseif event == "CHAT_MSG_LOOT" and arg1 and LootTrackerOptions["enabled"] == true then
 		
-		--extract the person who looted
-		local _, _, playername = string.find(arg1, LootTracker_pattern_playername)
-		if playername then
-			if playername == you then
-				playername = UnitName("player")
+		--check and ignore you create: 
+		if string.find(arg1, LootTracker_pattern_playername) then
+		
+			--extract the person who looted
+			local _, _, playername = string.find(arg1, LootTracker_pattern_playername)
+			if playername then
+				if playername == you then
+					playername = UnitName("player")
+				end
 			end
-		end
-		
-		--extract the itemname
-		local _, _, itemname = string.find(arg1, LootTracker_pattern_itemname)
-		
-		--extract the item id
-		local _, _, itemid = string.find(arg1, LootTracker_pattern_itemid)
+			
+			--extract the itemname
+			local _, _, itemname = string.find(arg1, LootTracker_pattern_itemname)
+			
+			--extract the item id
+			local _, _, itemid = string.find(arg1, LootTracker_pattern_itemid)
 
-		--extract rarity
-		local _, _, _, rarityhex = string.find(arg1, LootTracker_pattern_rarityhex)
+			--extract rarity
+			local _, _, _, rarityhex = string.find(arg1, LootTracker_pattern_rarityhex)
 
-		--check rarity and add itemname to db
-		if rarityhex == LootTracker_color_common and LootTrackerOptions["common"] == true then
-			rarity = "common"
-			LootTracker_AddtoDB (playername, itemname, itemid, rarity)
-		elseif rarityhex == LootTracker_color_uncommon and LootTrackerOptions["uncommon"] == true then
-			rarity = "uncommon"
-			LootTracker_AddtoDB (playername, itemname, itemid, rarity)
-		elseif rarityhex == LootTracker_color_rare and LootTrackerOptions["rare"] == true then
-			rarity = "rare"
-			LootTracker_AddtoDB (playername, itemname, itemid, rarity)
-		elseif rarityhex == LootTracker_color_epic and LootTrackerOptions["epic"] == true then
-			rarity = "epic"
-			LootTracker_AddtoDB (playername, itemname, itemid, rarity)
-		elseif rarityhex == LootTracker_color_legendary and LootTrackerOptions["legendary"] == true then
-			rarity = "legendary"
-			LootTracker_AddtoDB (playername, itemname, itemid, rarity)
+			--check rarity and add itemname to db
+			if rarityhex == LootTracker_color_common and LootTrackerOptions["common"] == true then
+				rarity = "common"
+				LootTracker_AddtoDB (playername, itemname, itemid, rarity)
+			elseif rarityhex == LootTracker_color_uncommon and LootTrackerOptions["uncommon"] == true then
+				rarity = "uncommon"
+				LootTracker_AddtoDB (playername, itemname, itemid, rarity)
+			elseif rarityhex == LootTracker_color_rare and LootTrackerOptions["rare"] == true then
+				rarity = "rare"
+				LootTracker_AddtoDB (playername, itemname, itemid, rarity)
+			elseif rarityhex == LootTracker_color_epic and LootTrackerOptions["epic"] == true then
+				rarity = "epic"
+				LootTracker_AddtoDB (playername, itemname, itemid, rarity)
+			elseif rarityhex == LootTracker_color_legendary and LootTrackerOptions["legendary"] == true then
+				rarity = "legendary"
+				LootTracker_AddtoDB (playername, itemname, itemid, rarity)
+			end
 		end
 	end
 end
@@ -171,10 +175,11 @@ end
 function LootTracker_SlashCommand(msg)
 
 	if msg == "help" then
-		DEFAULT_CHAT_FRAME:AddMessage("LootTracker DB is saved to: WTF\\Account\\ACCOUNTNAME\\SavedVariables\\LootTracker.lua")
+		DEFAULT_CHAT_FRAME:AddMessage("LootTracker DB is saved to: WTF\Account\ACCOUNTNAME\SavedVariables\LootTracker.lua")
 		DEFAULT_CHAT_FRAME:AddMessage("LootTracker usage:")
-		DEFAULT_CHAT_FRAME:AddMessage("/lt or /loottracker { help | enable | disable | toggle | show | database | reset | uncommon | common | rare | epic | legendary }")
+		DEFAULT_CHAT_FRAME:AddMessage("/lt or /loottracker { help | gui | enable | disable | toggle | show | database | reset | uncommon | common | rare | epic | legendary }")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9help|r: prints out this help")
+		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9gui|r: shows the GUI")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9enable|r: enables loot tracking")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9disable|r: disables loot tracking")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9toggle|r: toggles loot tracking")
@@ -186,7 +191,6 @@ function LootTracker_SlashCommand(msg)
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9rare|r: toggles tracking rare loot")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9epic|r: toggles tracking epic loot")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9legendary|r: toggles tracking legendary loot")
-	elseif msg == "toggle" then
 		if LootTrackerOptions["enabled"] == true then
 			LootTrackerOptions["enabled"] = false
 			DEFAULT_CHAT_FRAME:AddMessage("LootTracker state: |cffff0000disabled|r")
@@ -283,17 +287,18 @@ function LootTracker_SlashCommand(msg)
 			LootTrackerOptions["legendary"] = true
 			DEFAULT_CHAT_FRAME:AddMessage("Tracking legendary loot: |cff00ff00enabled|r")
 		end
-	elseif msg == "browse" then
+	elseif msg == "gui" then
 		if (LootTracker_BrowseFrame:IsVisible()) then
 			LootTracker_BrowseFrame:Hide()
 		else
-			LootTracker_SearchBrowseList()
+			LootTracker_OpenBrowseList()
 		end
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("LootTracker DB is saved to: WTF\Account\ACCOUNTNAME\SavedVariables\LootTracker.lua")
 		DEFAULT_CHAT_FRAME:AddMessage("LootTracker usage:")
-		DEFAULT_CHAT_FRAME:AddMessage("/lt or /loottracker { help | enable | disable | toggle | show | database | reset | uncommon | common | rare | epic | legendary }")
+		DEFAULT_CHAT_FRAME:AddMessage("/lt or /loottracker { help | gui | enable | disable | toggle | show | database | reset | uncommon | common | rare | epic | legendary }")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9help|r: prints out this help")
+		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9gui|r: shows the GUI")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9enable|r: enables loot tracking")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9disable|r: disables loot tracking")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9toggle|r: toggles loot tracking")
@@ -339,60 +344,101 @@ function LootTracker_Main_OnMouseUp(arg1)
 	end
 end
 
+function LootTracker_OpenBrowseList()
+	ShowUIPanel(LootTracker_BrowseFrame, 1)
+end
+
 function LootTracker_SearchBrowseList()
 	ShowUIPanel(LootTracker_BrowseFrame, 1)
 	LootTracker_BrowseTable = {}
 	
-	--arg needed
-	local raidid = "16-12-26 Blackwing Lair"
-
-	local iNew = 1;
-	for index in LootTrackerDB[raidid] do
-		--DEFAULT_CHAT_FRAME:AddMessage(index)
+	--read ReadSearch editbox
+	raidid = getglobal("LootTracker_RaidIDBox"):GetText()
 		
-		--DEFAULT_CHAT_FRAME:AddMessage(LootTrackerDB[raidid][index][LootTracker_dbfield_itemid])
-		--DEFAULT_CHAT_FRAME:AddMessage(LootTrackerDB[raidid][index][LootTracker_dbfield_itemname])
-
-		
-		LootTracker_BrowseTable[iNew] = {}
-		LootTracker_BrowseTable[iNew].timestamp = LootTrackerDB[raidid][index][LootTracker_dbfield_timestamp]
-		LootTracker_BrowseTable[iNew].playername = LootTrackerDB[raidid][index][LootTracker_dbfield_playername]
-		LootTracker_BrowseTable[iNew].itemname = LootTrackerDB[raidid][index][LootTracker_dbfield_itemname]
-		LootTracker_BrowseTable[iNew].cost = LootTrackerDB[raidid][index][LootTracker_dbfield_cost]
-		
-		
-		
-		iNew = iNew + 1;
+	--check if raid exists
+	raidfound = false
+	for k in pairs(LootTrackerDB) do
+		if k == raidid then
+			raidfound = true
+		end
 	end
-	
-	--set GUI Total Loots (per Raid)
-	getglobal("LootTracker_TotalLootText"):SetText("Raid: " .. raidid .. ":")
-	getglobal("LootTracker_TotalLootTextValue"):SetText(iNew-1 .. " item(s)")
-	
-	local line
-	
-	if (not LootTracker_BrowseTable.onePastEnd) then
-		LootTracker_BrowseTable.onePastEnd = 3;	
-	end
-	
-	--20 lines max in GUI LootTracker_List need scrol bar function
-	if iNew < 20 then
-		lineoffset = iNew-1
+	if raidfound == true then
+		local iNew = 1;
+		for index in LootTrackerDB[raidid] do
+			--DEFAULT_CHAT_FRAME:AddMessage(index)
+			--DEFAULT_CHAT_FRAME:AddMessage(LootTrackerDB[raidid][index][LootTracker_dbfield_itemid])
+			--DEFAULT_CHAT_FRAME:AddMessage(LootTrackerDB[raidid][index][LootTracker_dbfield_itemname])
+
+			LootTracker_BrowseTable[iNew] = {}
+			LootTracker_BrowseTable[iNew].timestamp = LootTrackerDB[raidid][index][LootTracker_dbfield_timestamp]
+			LootTracker_BrowseTable[iNew].playername = LootTrackerDB[raidid][index][LootTracker_dbfield_playername]
+			LootTracker_BrowseTable[iNew].itemname = LootTrackerDB[raidid][index][LootTracker_dbfield_itemname]
+			LootTracker_BrowseTable[iNew].cost = LootTrackerDB[raidid][index][LootTracker_dbfield_cost]
+
+			iNew = iNew + 1;
+		end
+		
+		--set GUI Total Loots (per Raid)
+		getglobal("LootTracker_TotalLootText"):SetText("Raid: " .. raidid .. ":")
+		getglobal("LootTracker_TotalLootTextValue"):SetText(iNew-1 .. " item(s)")
+		
+		local line
+		
+		if (not LootTracker_BrowseTable.onePastEnd) then
+			LootTracker_BrowseTable.onePastEnd = 3;	
+		end
+		
+		--20 lines max in GUI LootTracker_List need scrol bar function
+		if iNew < 20 then
+			lineoffset = iNew-1
+		else
+			lineoffset = 20
+		end
+		
+		for line=1, lineoffset, 1 do
+			getglobal("LootTracker_List"..line.."TextTimestamp"):SetText(LootTracker_BrowseTable[line].timestamp)
+			getglobal("LootTracker_List"..line.."TextPlayername"):SetText(LootTracker_BrowseTable[line].playername)
+			getglobal("LootTracker_List"..line.."TextItemName"):SetText(LootTracker_BrowseTable[line].itemname)
+			getglobal("LootTracker_List"..line.."TextCost"):SetText(LootTracker_BrowseTable[line].cost)
+			getglobal("LootTracker_List"..line):Show()
+		end
 	else
-		lineoffset = 20
+		DEFAULT_CHAT_FRAME:AddMessage("no raid found")
+	end
+end
+
+--lists raids in db
+function LootTracker_ListRaids()
+
+	LootTracker_RaidIDBrowseTable = {}
+	
+	ShowUIPanel(LootTracker_RaidIDFrame, 1)
+
+	
+	for k in pairs(LootTrackerDB) do
+		table.insert(LootTracker_RaidIDBrowseTable, k)
 	end
 	
+	lineoffset = 3
 	for line=1, lineoffset, 1 do
-		getglobal("LootTracker_List"..line.."TextTimestamp"):SetText(LootTracker_BrowseTable[line].timestamp)
-		getglobal("LootTracker_List"..line.."TextPlayername"):SetText(LootTracker_BrowseTable[line].playername)
-		getglobal("LootTracker_List"..line.."TextItemName"):SetText(LootTracker_BrowseTable[line].itemname)
-		getglobal("LootTracker_List"..line.."TextCost"):SetText(LootTracker_BrowseTable[line].cost)
-		getglobal("LootTracker_List"..line):Show()
+		getglobal("LootTracker_RaidIDList"..line.."TextRaidID"):SetText(LootTracker_RaidIDBrowseTable[line])
+		getglobal("LootTracker_RaidIDList"..line):Show()
 	end
 	
+
 end
 
 --fires when a line in the browse frame list is clicked
-function LootTracker_ListButton_OnClick(arg1)
+function LootTracker_ListButton_OnClick()
+	 DEFAULT_CHAT_FRAME:AddMessage(arg1)
+end
 
+--fires when a line in the Raid ID browse frame list is clicked
+function LootTracker_RaidIDListButton_OnClick()
+
+	local raidid_browse = getglobal(this:GetName().."TextRaidID"):GetText();
+	getglobal("LootTracker_RaidIDBox"):SetText(raidid_browse)
+	
+	HideUIPanel(LootTracker_RaidIDFrame, 1)
+	LootTracker_SearchBrowseList()
 end

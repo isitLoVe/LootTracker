@@ -108,6 +108,67 @@
 		</Layers>
 	</Button>
 	
+	<Button name="LootTracker_RaidIDListButton" virtual="true">
+		<Size>
+			<AbsDimension x="200" y="16"/>
+		</Size>
+		<Scripts>
+			<OnLoad>
+				this:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+				this:SetBackdropColor(0.8, 0.8, 0.8, 0.2);
+			</OnLoad>
+			<OnClick>
+				LootTracker_RaidIDListButton_OnClick(arg1);
+			</OnClick>
+			<OnEnter>
+			</OnEnter>
+			<OnLeave>
+			</OnLeave>
+		</Scripts>
+		<NormalText name="$parentText" inherits="GameFontNormalSmall" justifyH="LEFT">
+			<Size>
+				<AbsDimension x="160" y="10"/>
+			</Size>
+			<Anchors>
+				<Anchor point="LEFT">
+					<Offset>
+						<AbsDimension x="20" y="0"/>
+					</Offset>
+				</Anchor>
+			</Anchors> 
+		</NormalText>
+		<HighlightTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD">
+			<Size>
+				<AbsDimension x="170" y="16"/>
+			</Size>
+			<Anchors>
+				<Anchor point="TOP">
+					<Offset>
+						<AbsDimension x="2" y="0"/>
+					</Offset>
+				</Anchor>
+			</Anchors>
+		</HighlightTexture>
+		<Frames>
+		</Frames>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="$parentTextRaidID" inherits="GameFontNormalSmall" justifyH="LEFT">
+					<Size>
+						<AbsDimension x="180" y="10"/>
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT">
+							<Offset>
+								<AbsDimension x="0" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</Button>
+	
 	<Button name="LootTracker_SortButtonTemplate" virtual="true">
 		<NormalText name="$parentText" inherits="GameFontHighlightSmall">
 			<Anchors>
@@ -158,13 +219,6 @@
 		</Scripts>
 	</Button>
 	
-	
-	
-	
-	
-	
-	
-	
 	<Frame name="LootTracker_BrowseFrame" frameStrata="DIALOG" toplevel="true" parent="UIParent" movable="true" enableMouse="true" hidden="true">
 		<Size>
 			<AbsDimension x="800" y="600"/>
@@ -178,7 +232,7 @@
 		</Anchors>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="LootTracker_ListPortraitTexture" file="Interface\CharacterFrame\TemporaryPortrait-Monster">
+				<Texture name="LootTracker_ListPortraitTexture" file="Interface\TargetingFrame\TargetDead">
 					<Size>
 						<AbsDimension x="58" y="58"/>
 					</Size>
@@ -270,6 +324,17 @@
 					</Anchors>
 				</Texture>
 			</Layer>
+			<Layer level="OVERLAY">
+				<FontString name="LootTracker_RaidIDText" inherits="GameFontNormalSmall" text="RaidID:">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parent">
+							<Offset>
+								<AbsDimension x="78" y="-43"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
 		</Layers>
 		<Scripts> 
 			<OnShow>
@@ -294,6 +359,43 @@
 					</Anchor>
 				</Anchors>
 			</Button>
+			<EditBox name="LootTracker_RaidIDBox" autoFocus="false" inherits="InputBoxTemplate">
+				<Size>
+					<AbsDimension x="150" y="16"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="LootTracker_RaidIDText" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="8" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnTabPressed>
+					</OnTabPressed>
+					<OnEnterPressed>
+						LootTracker_SearchBrowseList()
+						this:ClearFocus();
+					</OnEnterPressed>
+				</Scripts>
+			</EditBox>
+			<Button name="LootTracker_RaidIDButton" inherits="UIPanelButtonTemplate" text="Browse Raids">
+				<Size>
+					<AbsDimension x="100" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="LootTracker_RaidIDBox" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						LootTracker_ListRaids();
+					</OnClick>
+				</Scripts>
+			</Button>
 			<Frame name="LootTracker_ListBrowse">
 				<Size>
 					<AbsDimension x="758" y="447"/>
@@ -304,12 +406,12 @@
 				<Frames>
 					<ScrollFrame name="LootTracker_ListScrollFrame" inherits="FauxScrollFrameTemplate">
 						<Size>
-							<AbsDimension x="780" y="322"/>
+							<AbsDimension x="780" y="335"/>
 						</Size>
 						<Anchors>
 							<Anchor point="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="68" y="-80"/>
+									<AbsDimension x="68" y="-74"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -589,7 +691,7 @@
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="LootTracker_BrowseCloseButton" inherits="UIPanelButtonTemplate" text="CLOSE">
+					<Button name="LootTracker_BrowseCloseButton" inherits="UIPanelButtonTemplate" text="Close">
 						<Size>
 							<AbsDimension x="80" y="22"/>
 						</Size>
@@ -665,7 +767,7 @@
 							</Layer>
 						</Layers>
 					</Frame>
-					<Frame name="MI2B_SortBar"> 
+					<Frame name="LootTracker_SortBar"> 
 						<Size>
 							<AbsDimension x="805" y="13" />
 						</Size>
@@ -756,4 +858,101 @@
 			</Frame>
 		</Frames>
 	</Frame>
+
+	<Frame name="LootTracker_RaidIDFrame" frameStrata="DIALOG" toplevel="true" parent="UIParent" movable="true" enableMouse="true" hidden="true">
+		<Size>
+			<AbsDimension x="220" y="200"/>
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Layers>
+		</Layers>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset bottom="4" left="4" right="4" top="4"></AbsInset>
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="32"></AbsValue>
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="16"></AbsValue>
+			</EdgeSize>
+		</Backdrop>
+		<Frames>
+			<Button inherits="UIPanelCloseButton" name="$parent_CloseButton">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="0" y="0"></AbsDimension>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>LootTracker_RaidIDFrame:Hide();</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="LootTracker_RaidIDList1" inherits="LootTracker_RaidIDListButton" id="1" hidden="true">
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+				</Backdrop>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="10" y="-25"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="LootTracker_RaidIDList2" inherits="LootTracker_RaidIDListButton" id="2" hidden="true">
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+				</Backdrop>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="LootTracker_RaidIDList1" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="LootTracker_RaidIDList3" inherits="LootTracker_RaidIDListButton" id="3" hidden="true">
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+				</Backdrop>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="LootTracker_RaidIDList2" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnMouseDown>
+				if ( not this.isMoving ) then
+				this:StartMoving();
+				this.isMoving = true;
+				end
+			</OnMouseDown>
+			<OnMouseUp>
+				if ( this.isMoving) then
+				this:StopMovingOrSizing();
+				this.isMoving = false;
+				end
+			</OnMouseUp>
+		</Scripts>
+	</Frame>
+	
 </Ui>
