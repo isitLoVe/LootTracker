@@ -288,10 +288,11 @@ function LootTracker_SlashCommand(msg)
 			DEFAULT_CHAT_FRAME:AddMessage("Tracking legendary loot: |cff00ff00enabled|r")
 		end
 	elseif msg == "gui" then
-		if (LootTracker_BrowseFrame:IsVisible()) then
+		if (LootTracker_BrowseFrame:IsVisible() or LootTracker_RaidIDFrame:IsVisible()) then
 			LootTracker_BrowseFrame:Hide()
+			LootTracker_RaidIDFrame:Hide()
 		else
-			LootTracker_OpenBrowseList()
+			ShowUIPanel(LootTracker_BrowseFrame, 1)
 		end
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("LootTracker DB is saved to: WTF\Account\ACCOUNTNAME\SavedVariables\LootTracker.lua")
@@ -344,90 +345,68 @@ function LootTracker_Main_OnMouseUp(arg1)
 	end
 end
 
-function LootTracker_OpenBrowseList()
-	ShowUIPanel(LootTracker_BrowseFrame, 1)
-end
-
-function LootTracker_SearchBrowseList()
-	ShowUIPanel(LootTracker_BrowseFrame, 1)
+function LootTracker_ListScrollFrame_Update()
 	LootTracker_BrowseTable = {}
-	
 	--read ReadSearch editbox
 	raidid = getglobal("LootTracker_RaidIDBox"):GetText()
 		
 	--check if raid exists
 	raidfound = false
-	for k in pairs(LootTrackerDB) do
-		if k == raidid then
-			raidfound = true
+	if raidid and (string.len(raidid) >= 1) then
+		for k in pairs(LootTrackerDB) do
+			if k == raidid then
+				raidfound = true
+			end
 		end
 	end
+	
 	if raidfound == true then
-		local iNew = 1;
+
 		for index in LootTrackerDB[raidid] do
-			--DEFAULT_CHAT_FRAME:AddMessage(index)
-			--DEFAULT_CHAT_FRAME:AddMessage(LootTrackerDB[raidid][index][LootTracker_dbfield_itemid])
-			--DEFAULT_CHAT_FRAME:AddMessage(LootTrackerDB[raidid][index][LootTracker_dbfield_itemname])
-
-			LootTracker_BrowseTable[iNew] = {}
-			LootTracker_BrowseTable[iNew].timestamp = LootTrackerDB[raidid][index][LootTracker_dbfield_timestamp]
-			LootTracker_BrowseTable[iNew].playername = LootTrackerDB[raidid][index][LootTracker_dbfield_playername]
-			LootTracker_BrowseTable[iNew].itemname = LootTrackerDB[raidid][index][LootTracker_dbfield_itemname]
-			LootTracker_BrowseTable[iNew].cost = LootTrackerDB[raidid][index][LootTracker_dbfield_cost]
-
-			iNew = iNew + 1;
+			LootTracker_BrowseTable[index] = {}
+			LootTracker_BrowseTable[index].timestamp = LootTrackerDB[raidid][index][LootTracker_dbfield_timestamp]
+			LootTracker_BrowseTable[index].playername = LootTrackerDB[raidid][index][LootTracker_dbfield_playername]
+			LootTracker_BrowseTable[index].itemname = LootTrackerDB[raidid][index][LootTracker_dbfield_itemname]
+			LootTracker_BrowseTable[index].cost = LootTrackerDB[raidid][index][LootTracker_dbfield_cost]
 		end
+	
 		
 		--set GUI Total Loots (per Raid)
+		local maxlines = getn(LootTracker_BrowseTable)
 		getglobal("LootTracker_TotalLootText"):SetText("Raid: " .. raidid .. ":")
-		getglobal("LootTracker_TotalLootTextValue"):SetText(iNew-1 .. " item(s)")
-		
-		local line
-		
-		if (not LootTracker_BrowseTable.onePastEnd) then
-			LootTracker_BrowseTable.onePastEnd = 3;	
-		end
-		
-		--20 lines max in GUI LootTracker_List need scrol bar function
-		if iNew < 20 then
-			lineoffset = iNew-1
+		if maxlines == 1 then
+			getglobal("LootTracker_TotalLootTextValue"):SetText(maxlines .. " item")
 		else
-			lineoffset = 20
+			getglobal("LootTracker_TotalLootTextValue"):SetText(maxlines .. " items")
 		end
 		
-		for line=1, lineoffset, 1 do
-			getglobal("LootTracker_List"..line.."TextTimestamp"):SetText(LootTracker_BrowseTable[line].timestamp)
-			getglobal("LootTracker_List"..line.."TextPlayername"):SetText(LootTracker_BrowseTable[line].playername)
-			getglobal("LootTracker_List"..line.."TextItemName"):SetText(LootTracker_BrowseTable[line].itemname)
-			getglobal("LootTracker_List"..line.."TextCost"):SetText(LootTracker_BrowseTable[line].cost)
-			getglobal("LootTracker_List"..line):Show()
-		end
+		
+		local line; -- 1 through 20 of our window to scroll
+		local lineplusoffset; -- an index into our data calculated from the scroll offset
+	   
+		 -- maxlines is max entries, 1 is number of lines, 16 is pixel height of each line
+		FauxScrollFrame_Update(LootTracker_ListScrollFrame, maxlines, 1, 16)
+
+
+		for line=1,20 do
+			 lineplusoffset = line + FauxScrollFrame_GetOffset(LootTracker_ListScrollFrame);
+			 if lineplusoffset <= maxlines then
+				getglobal("LootTracker_List"..line.."TextTimestamp"):SetText(LootTracker_BrowseTable[lineplusoffset].timestamp)
+				getglobal("LootTracker_List"..line.."TextPlayername"):SetText(LootTracker_BrowseTable[lineplusoffset].playername)
+				getglobal("LootTracker_List"..line.."TextItemName"):SetText(LootTracker_BrowseTable[lineplusoffset].itemname)
+				getglobal("LootTracker_List"..line.."TextCost"):SetText(LootTracker_BrowseTable[lineplusoffset].cost)
+				getglobal("LootTracker_List"..line):Show()
+			 else
+				getglobal("LootTracker_List"..line):Hide()
+			 end
+	   end
 	else
-		DEFAULT_CHAT_FRAME:AddMessage("no raid found")
+		getglobal("LootTracker_TotalLootText"):SetText("no Raid found: " .. raidid)
+		getglobal("LootTracker_TotalLootTextValue"):SetText("0 items")
 	end
 end
 
---lists raids in db
-function LootTracker_ListRaids()
-
-	LootTracker_RaidIDBrowseTable = {}
-	
-	ShowUIPanel(LootTracker_RaidIDFrame, 1)
-
-	
-	for k in pairs(LootTrackerDB) do
-		table.insert(LootTracker_RaidIDBrowseTable, k)
-	end
-	
-	lineoffset = 3
-	for line=1, lineoffset, 1 do
-		getglobal("LootTracker_RaidIDList"..line.."TextRaidID"):SetText(LootTracker_RaidIDBrowseTable[line])
-		getglobal("LootTracker_RaidIDList"..line):Show()
-	end
-	
-
-end
-
+--	 DEFAULT_CHAT_FRAME:AddMessage(getn(LootTracker_RaidIDBrowseTable))
 --fires when a line in the browse frame list is clicked
 function LootTracker_ListButton_OnClick()
 	 DEFAULT_CHAT_FRAME:AddMessage(arg1)
@@ -440,5 +419,39 @@ function LootTracker_RaidIDListButton_OnClick()
 	getglobal("LootTracker_RaidIDBox"):SetText(raidid_browse)
 	
 	HideUIPanel(LootTracker_RaidIDFrame, 1)
-	LootTracker_SearchBrowseList()
+	LootTracker_ListScrollFrame_Update()
+	
+end
+
+--Raid ID Browser ScrollBar
+function LootTracker_RaidIDScrollFrame_Update()
+
+	LootTracker_RaidIDBrowseTable = {}
+		
+	for k in pairs(LootTrackerDB) do
+		table.insert(LootTracker_RaidIDBrowseTable, k)
+	end
+	
+	--sort table
+	table.sort(LootTracker_RaidIDBrowseTable, function(a, b) return a > b end)
+	--table.sort(LootTracker_RaidIDBrowseTable)
+
+	local maxlines = getn(LootTracker_RaidIDBrowseTable)
+	
+	local line; -- 1 through 10 of our window to scroll
+	local lineplusoffset; -- an index into our data calculated from the scroll offset
+   
+	 -- maxlines is max entries, 1 is number of lines, 16 is pixel height of each line
+	FauxScrollFrame_Update(LootTracker_RaidIDScrollFrame, maxlines, 1, 16)
+
+
+	for line=1,10 do
+		 lineplusoffset = line + FauxScrollFrame_GetOffset(LootTracker_RaidIDScrollFrame);
+		 if lineplusoffset <= maxlines then
+			getglobal("LootTracker_RaidIDList"..line.."TextRaidID"):SetText(LootTracker_RaidIDBrowseTable[lineplusoffset])
+			getglobal("LootTracker_RaidIDList"..line):Show()
+		 else
+			getglobal("LootTracker_RaidIDList"..line):Hide()
+		 end
+   end
 end
