@@ -1,5 +1,5 @@
 ## Title: LootTracker
-## Notes: Tracks 
+## Notes: Tracks Loot
 ## Version: 0.2.1
 ## Author: |cff02bf02Luise|r
 ## Interface: 11200
