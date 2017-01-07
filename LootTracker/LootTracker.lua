@@ -25,7 +25,7 @@ end
 	
 function LootTracker_OnLoad()
 
-	DEFAULT_CHAT_FRAME:AddMessage(string.format("LootTracker v%s by %s", GetAddOnMetadata("LootTracker", "Version"), GetAddOnMetadata("LootTracker", "Author")));
+	DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffa335eeLootTracker|r v%s by %s", GetAddOnMetadata("LootTracker", "Version"), GetAddOnMetadata("LootTracker", "Author")));
     this:RegisterEvent("VARIABLES_LOADED");
     this:RegisterEvent("CHAT_MSG_LOOT")
 	--CHAT_MSG_LOOT examples:

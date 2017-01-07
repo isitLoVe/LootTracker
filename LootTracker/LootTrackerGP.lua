@@ -1068,4 +1068,6 @@ Item21393 = "8"; --Battlegear of Unyielding Strength
 	
 };
     
-    
+Discordia_GP = {
+
+}    

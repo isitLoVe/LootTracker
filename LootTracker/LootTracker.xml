@@ -14,7 +14,7 @@
 	<GameTooltip name="LootTracker_Tooltip" inherits="GameTooltipTemplate" frameStrata="TOOLTIP" parent="UIParent" hidden="true"/>
 	<Button name="LootTracker_ListButtonTemplate" virtual="true">
 		<Size>
-			<AbsDimension x="810" y="16"/>
+			<AbsDimension x="960" y="16"/>
 		</Size>
 		<Scripts>
 			<OnLoad>
@@ -47,7 +47,7 @@
 		</NormalText>
 		<HighlightTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD">
 			<Size>
-				<AbsDimension x="780" y="16"/>
+				<AbsDimension x="960" y="16"/>
 			</Size>
 			<Anchors>
 				<Anchor point="TOP">
@@ -111,7 +111,7 @@
 				</FontString>
 				<FontString name="$parentTextOffspec" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size>
-						<AbsDimension x="100" y="10"/>
+						<AbsDimension x="80" y="10"/>
 					</Size>
 					<Anchors>
 						<Anchor point="LEFT">
@@ -123,12 +123,12 @@
 				</FontString>
 				<FontString name="$parentTextDE" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size>
-						<AbsDimension x="100" y="10"/>
+						<AbsDimension x="80" y="10"/>
 					</Size>
 					<Anchors>
 						<Anchor point="LEFT">
 							<Offset>
-								<AbsDimension x="900" y="0"/>
+								<AbsDimension x="880" y="0"/>
 							</Offset>
 						</Anchor>
 					</Anchors> 
@@ -272,7 +272,7 @@
 				</Texture>
 			</Layer>
 			<Layer level="ARTWORK">
-				<FontString name="$parentTitle" inherits="GameFontNormal" text="LootTracker Browser">
+				<FontString name="$parentTitle" inherits="GameFontNormal" text="|cffa335eeLootTracker Browser|r">
 					<Anchors>
 						<Anchor point="TOP">
 							<Offset>
@@ -451,10 +451,15 @@
 						</Scripts>
 					</ScrollFrame>
 					<Button name="LootTracker_List1" inherits="LootTracker_ListButtonTemplate" id="1" hidden="true">
+						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+						</Backdrop>
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset>
-									<AbsDimension x="21" y="-86"/>
+									<AbsDimension x="21" y="-88"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -761,7 +766,7 @@
 					</Button>
 					<Frame name="$parentCoverInfo">
 						<Size>
-							<AbsDimension x="510" y="26"/>
+							<AbsDimension x="665" y="26"/>
 						</Size>
 						<Anchors>
 							<Anchor point="RIGHT" relativeTo="LootTracker_ListSearchButton" relativePoint="LEFT">
@@ -782,9 +787,9 @@
 							<Layer level="OVERLAY">
 								<FontString name="LootTracker_TotalLootText" inherits="GameFontNormalSmall" text="Raid:">
 									<Anchors>
-										<Anchor point="LEFT">
+										<Anchor point="LEFT" relativeto="LootTracker_BrowseFrameBotLeft" relativePoint="RIGHT">
 											<Offset>
-												<AbsDimension x="32" y="0"/>
+												<AbsDimension x="-60" y="-38"/>
 											</Offset>
 										</Anchor>
 									</Anchors>
@@ -803,12 +808,12 @@
 					</Frame>
 					<Frame name="LootTracker_SortBar"> 
 						<Size>
-							<AbsDimension x="805" y="13" />
+							<AbsDimension x="960" y="15" />
 						</Size>
 						<Anchors>
 							<Anchor	point="TOPLEFT">
 								<Offset>
-									<AbsDimension x="24" y="-74" />
+									<AbsDimension x="22" y="-74" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -823,12 +828,12 @@
 						<Frames>
 							<Button name="LootTracker_SortTimestamp" inherits="LootTracker_SortButtonTemplate" text="Timestamp">
 								<Size>
-									<AbsDimension x="200" y="14"/>
+									<AbsDimension x="200" y="16"/>
 								</Size>
 								<Anchors>
 									<Anchor point="BOTTOMLEFT" relativeTo="LootTracker_List1TextTimestamp" relativePoint="TOPLEFT">
 										<Offset>
-											<AbsDimension x="0" y="0"/>
+											<AbsDimension x="-5" y="2"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -840,12 +845,12 @@
 							</Button>
 							<Button name="LootTracker_SortPlayername" inherits="LootTracker_SortButtonTemplate" text="Playername">
 								<Size>
-									<AbsDimension x="200" y="14"/>
+									<AbsDimension x="200" y="16"/>
 								</Size>
 								<Anchors>
 									<Anchor point="BOTTOMLEFT" relativeTo="LootTracker_List1TextPlayername" relativePoint="TOPLEFT">
 										<Offset>
-											<AbsDimension x="-5" y="0"/>
+											<AbsDimension x="-5" y="2"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -857,12 +862,12 @@
 							</Button>						
 							<Button name="LootTracker_SortItemName" inherits="LootTracker_SortButtonTemplate" text="ItemName">
 								<Size>
-									<AbsDimension x="300" y="14"/>
+									<AbsDimension x="300" y="16"/>
 								</Size>
 								<Anchors>
 									<Anchor point="BOTTOMLEFT" relativeTo="LootTracker_List1TextItemName" relativePoint="TOPLEFT">
 										<Offset>
-											<AbsDimension x="-5" y="0"/>
+											<AbsDimension x="-5" y="2"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -874,12 +879,12 @@
 							</Button>						
 							<Button name="LootTracker_SortCost" inherits="LootTracker_SortButtonTemplate" text="Cost">
 								<Size>
-									<AbsDimension x="100" y="14"/>
+									<AbsDimension x="100" y="16"/>
 								</Size>
 								<Anchors>
 									<Anchor point="BOTTOMLEFT" relativeTo="LootTracker_List1TextCost" relativePoint="TOPLEFT">
 										<Offset>
-											<AbsDimension x="-5" y="0"/>
+											<AbsDimension x="-5" y="2"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -889,7 +894,40 @@
 									</OnClick>
 								</Scripts>
 							</Button>						
-						
+							<Button name="LootTracker_SortOffspec" inherits="LootTracker_SortButtonTemplate" text="Offspec">
+								<Size>
+									<AbsDimension x="80" y="16"/>
+								</Size>
+								<Anchors>
+									<Anchor point="BOTTOMLEFT" relativeTo="LootTracker_List1TextOffspec" relativePoint="TOPLEFT">
+										<Offset>
+											<AbsDimension x="-5" y="2"/>
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnClick>
+										LootTracker_SortOffspec_OnClick(arg1);
+									</OnClick>
+								</Scripts>
+							</Button>						
+							<Button name="LootTracker_SortDE" inherits="LootTracker_SortButtonTemplate" text="DE">
+								<Size>
+									<AbsDimension x="80" y="16"/>
+								</Size>
+								<Anchors>
+									<Anchor point="BOTTOMLEFT" relativeTo="LootTracker_List1TextDE" relativePoint="TOPLEFT">
+										<Offset>
+											<AbsDimension x="-5" y="2"/>
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnClick>
+										LootTracker_SortCost_OnClick(arg1);
+									</OnClick>
+								</Scripts>
+							</Button>						
 						</Frames>
 					</Frame>
 				</Frames>

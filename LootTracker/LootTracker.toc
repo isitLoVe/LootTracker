@@ -1,5 +1,5 @@
-## Title: LootTracker
-## Notes: Tracks Loot
+## Title: LT - |cffa335eeLootTracker|r
+## Notes: Tracks Loot by |cff02bf02Luise|r
 ## Version: 0.2.1
 ## Author: |cff02bf02Luise|r
 ## Interface: 11200
