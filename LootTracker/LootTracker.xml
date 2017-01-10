@@ -245,7 +245,37 @@
 		</Scripts>
 	</Button>
 	
-	<Frame name="LootTracker_BrowseFrame" frameStrata="HIGH" toplevel="true" parent="UIParent" movable="true" enableMouse="true" hidden="true">
+	<CheckButton name="LootTracker_OptionCheckButton" virtual="true">
+		<HitRectInsets>
+			<AbsInset left="0" right="-100" top="0" bottom="0"/>
+		</HitRectInsets>
+		<Size>
+			<AbsDimension x="32" y="32"/>
+		</Size>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentText" inherits="GameFontNormalSmall">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="RIGHT">
+							<Offset>
+								<AbsDimension x="-2" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+		<PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+		<HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+		<CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+		<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+		<Scripts>
+		</Scripts>
+	</CheckButton>
+
+	
+	<Frame name="LootTracker_BrowseFrame" frameStrata="HIGH" toplevel="true" parent="UIParent" movable="true" enableMouse="true" hidden="true" clampedToScreen="true">
 		<Size>
 			<AbsDimension x="1012" y="440"/>
 		</Size>
@@ -935,7 +965,7 @@
 		</Frames>
 	</Frame>
 
-	<Frame name="LootTracker_RaidIDFrame" frameStrata="DIALOG" toplevel="true" parent="UIParent" movable="true" enableMouse="true" hidden="true">
+	<Frame name="LootTracker_RaidIDFrame" frameStrata="DIALOG" toplevel="true" parent="UIParent" movable="true" enableMouse="true" hidden="true" clampedToScreen="true">
 		<Size>
 			<AbsDimension x="220" y="200"/>
 		</Size>
@@ -1164,4 +1194,285 @@
 		</Scripts>
 	</Frame>
 	
+	<Frame name="LootTracker_ItemEditFrame" frameStrata="DIALOG" toplevel="true" parent="UIParent" movable="false" enableMouse="true" hidden="true" clampedToScreen="true">
+		<Size>
+			<AbsDimension x="500" y="150"/>
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="$parentItemName" inherits="GameFontNormalLarge">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="11" y="-13"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentPlayerName" inherits="GameFontNormalLarge">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentItemName" relativePoint="BOTTOMLEFT">
+							<Offset>
+								<AbsDimension x="0" y="-5"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentOldPlayerGPText" inherits="GameFontNormal" text="old GP:">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="200" y="-60"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentOldPlayerGP" inherits="GameFontNormal">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentOldPlayerGPText" relativePoint="TOPRIGHT">
+							<Offset>
+								<AbsDimension x="10" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentCostText" inherits="GameFontNormal" text="cost:">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="200" y="-80"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentCost" inherits="GameFontNormal">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentCostText" relativePoint="TOPRIGHT">
+							<Offset>
+								<AbsDimension x="10" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentNewPlayerGPText" inherits="GameFontNormal" text="new GP:">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="200" y="-100"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentNewPlayerGP" inherits="GameFontNormal">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentNewPlayerGPText" relativePoint="TOPRIGHT">
+							<Offset>
+								<AbsDimension x="10" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">			<BackgroundInsets>
+				<AbsInset bottom="4" left="4" right="4" top="4"></AbsInset>
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="32"></AbsValue>
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="16"></AbsValue>
+			</EdgeSize>
+		</Backdrop>
+		<Frames>
+			<Button inherits="UIPanelCloseButton" name="$parent_CloseButton">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="0" y="0"></AbsDimension>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>LootTracker_ItemEditFrame:Hide();</OnClick>
+				</Scripts>
+			</Button>
+			<CheckButton id="1" inherits="LootTracker_OptionCheckButton" name="$parentOption1">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent">
+						<Offset>
+							<AbsDimension x="10" y="-60"></AbsDimension>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+				<OnLoad>
+					getglobal(this:GetName().."Text"):SetText("Offspec")
+				 </OnLoad>
+			 </Scripts>
+			</CheckButton>
+			<CheckButton id="2" inherits="LootTracker_OptionCheckButton" name="$parentOption2">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$parentOption1">
+						<Offset>
+							<AbsDimension x="0" y="0"></AbsDimension>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+				<OnLoad>
+					getglobal(this:GetName().."Text"):SetText("Disenchant")
+				 </OnLoad>
+			 </Scripts>
+			</CheckButton>
+		</Frames>
+		<Scripts>
+		</Scripts>
+	</Frame>
+	
+	<Frame name="LootTracker_OptionsFrame" frameStrata="DIALOG" toplevel="true" parent="UIParent" movable="false" enableMouse="true" hidden="true" clampedToScreen="true">
+		<Size>
+			<AbsDimension x="300" y="400"/>
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="11" right="12" top="12" bottom="11"/>
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="32"/>
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="32"/>
+			</EdgeSize>
+		</Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture name="$ParentHeader" file="Interface\DialogFrame\UI-DialogBox-Header">
+					<Size>
+						<AbsDimension x="305" y="64"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOP">
+							<Offset>
+								<AbsDimension x="0" y="12"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<FontString inherits="GameFontNormal" text="LootTracker Options">
+					<Anchors>
+						<Anchor point="TOP" relativeTo="$parentHeader">
+							<Offset>
+								<AbsDimension x="0" y="-14"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button inherits="UIPanelCloseButton" name="$parent_CloseButton">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="-4" y="-4"></AbsDimension>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>LootTracker_OptionsFrame:Hide();</OnClick>
+				</Scripts>
+			</Button>
+			<CheckButton name="$parentCheckButton1" inherits="LootTracker_OptionCheckButton">
+				 <Anchors> 
+					<Anchor point="TOPLEFT">
+					  <Offset>
+							<AbsDimension x="15" y="-30"/>
+						 </Offset>
+					 </Anchor>
+				 </Anchors>      
+				<Scripts>
+				<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Track |cffffffffcommon|r Loot")
+				 </OnLoad>
+			 </Scripts>
+			</CheckButton>
+			<CheckButton name="$parentCheckButton2" inherits="LootTracker_OptionCheckButton">
+				 <Anchors> 
+					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton1" relativePoint="BOTTOMLEFT">
+					  <Offset>
+							<AbsDimension x="0" y="0"/>
+						 </Offset>
+					 </Anchor>
+				 </Anchors>      
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Track |cff1eff00uncommon|r Loot")
+					 </OnLoad>
+				 </Scripts>
+			 </CheckButton>
+			<CheckButton name="$parentCheckButton3" inherits="LootTracker_OptionCheckButton">
+				 <Anchors> 
+					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton2" relativePoint="BOTTOMLEFT">
+					  <Offset>
+							<AbsDimension x="0" y="0"/>
+						 </Offset>
+					 </Anchor>
+				 </Anchors>      
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Track |cff0070ddrare|r Loot")
+					 </OnLoad>
+				 </Scripts>
+			 </CheckButton>
+			<CheckButton name="$parentCheckButton4" inherits="LootTracker_OptionCheckButton">
+				 <Anchors> 
+					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton3" relativePoint="BOTTOMLEFT">
+					  <Offset>
+							<AbsDimension x="0" y="0"/>
+						 </Offset>
+					 </Anchor>
+				 </Anchors>      
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Track |cffa335eeepic|r Loot")
+					 </OnLoad>
+				 </Scripts>
+			 </CheckButton>
+			<CheckButton name="$parentCheckButton5" inherits="LootTracker_OptionCheckButton">
+				 <Anchors> 
+					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton4" relativePoint="BOTTOMLEFT">
+					  <Offset>
+							<AbsDimension x="0" y="0"/>
+						 </Offset>
+					 </Anchor>
+				 </Anchors>      
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Track |cffff8000legendary|r Loot")
+					 </OnLoad>
+				 </Scripts>
+			 </CheckButton>
+		</Frames>
+		<Scripts>
+			<OnShow>
+				LootTracker_OptionsFrame_OnShow();
+			</OnShow>
+		</Scripts>
+	</Frame>
+
 </Ui>
