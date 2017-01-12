@@ -269,6 +269,9 @@ end
 --LootTracker Database Functions
 ---------------------------------------------------------
 function LootTracker_AddtoDB(playername, itemname, itemid, rarity, offspec, de)
+
+	--clear variables
+	
 	
 	--get the metadata
 	timestamp_raidid = date("%y-%m-%d")
@@ -310,6 +313,8 @@ function LootTracker_AddtoDB(playername, itemname, itemid, rarity, offspec, de)
 				cost = v
 				DEFAULT_CHAT_FRAME:AddMessage("itemid:"..itemid)
 				DEFAULT_CHAT_FRAME:AddMessage("cost:"..cost)
+			else
+				cost = nil
 			end
 		end
 	end
