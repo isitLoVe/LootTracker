@@ -572,29 +572,7 @@ function LootTracker_ListButton_OnClick(button, index)
 		end
 		
 	 elseif button == "RightButton" then
-		--fill window then open
-		getglobal("LootTracker_ItemEditFrameItemName"):SetText(LootTracker_BrowseTable[index].itemname)
-		getglobal("LootTracker_ItemEditFramePlayerName"):SetText(LootTracker_BrowseTable[index].playername)
-		getglobal("LootTracker_ItemEditFrameOldPlayerGP"):SetText(LootTracker_BrowseTable[index].oldplayergp)
-		getglobal("LootTracker_ItemEditFrameCost"):SetText(LootTracker_BrowseTable[index].cost)
-		getglobal("LootTracker_ItemEditFrameNewPlayerGP"):SetText(LootTracker_BrowseTable[index].newplayergp)
-		
-		if LootTracker_BrowseTable[index].offspec then
-		--set checked
-			getglobal("LootTracker_ItemEditFrameOption1"):SetChecked(true)
-		else
-			getglobal("LootTracker_ItemEditFrameOption1"):SetChecked(false)
-		end
-		
-		if LootTracker_BrowseTable[index].de then
-			getglobal("LootTracker_ItemEditFrameOption2"):SetChecked(true)
-		else
-			getglobal("LootTracker_ItemEditFrameOption2"):SetChecked(false)
-		end
-		
-		
-		
-		ShowUIPanel(LootTracker_ItemEditFrame, 1)
+		LootTracker_ItemEdit(index)
 	 end
 end
 
@@ -662,37 +640,172 @@ end
 ---------------------------------------------------------
 --LootTracker ItemEdit Frame Functions
 ---------------------------------------------------------
+function LootTracker_ItemEdit(index)
+	--fill window then open
+	getglobal("LootTracker_ItemEditFrameItemName"):SetText(LootTracker_BrowseTable[index].itemname)
+	getglobal("LootTracker_ItemEditFramePlayerName"):SetText(LootTracker_BrowseTable[index].playername)
+	getglobal("LootTracker_ItemEditFrameOldPlayerGP"):SetText(LootTracker_BrowseTable[index].oldplayergp)
+	getglobal("LootTracker_ItemEditFrameCost"):SetText(LootTracker_BrowseTable[index].cost)
+	getglobal("LootTracker_ItemEditFrameNewPlayerGP"):SetText(LootTracker_BrowseTable[index].newplayergp)
+	
+	if LootTracker_BrowseTable[index].offspec then
+		getglobal("LootTracker_ItemEditFrameOption1"):SetChecked(true)
+	else
+		getglobal("LootTracker_ItemEditFrameOption1"):SetChecked(false)
+	end
+	
+	if LootTracker_BrowseTable[index].de then
+		getglobal("LootTracker_ItemEditFrameOption2"):SetChecked(true)
+	else
+		getglobal("LootTracker_ItemEditFrameOption2"):SetChecked(false)
+	end
 
+	ShowUIPanel(LootTracker_ItemEditFrame, 1)
+end
 
+--Offspec
+function LootTracker_ItemEditFrameOption1_onClick()
+	if LootTracker_BrowseTable[index].offspec then
+		DEFAULT_CHAT_FRAME:AddMessage("offspec ".. )
+		LootTrackerDB[raidid][lootid][LootTracker_dbfield_offspec] = false
+				
+		getglobal("LootTracker_ItemEditFrameOldPlayerGP"):SetText(LootTracker_BrowseTable[index].oldplayergp)
+		getglobal("LootTracker_ItemEditFrameCost"):SetText(LootTracker_BrowseTable[index].cost/2)
+		getglobal("LootTracker_ItemEditFrameNewPlayerGP"):SetText(LootTracker_BrowseTable[index].newplayergp)
+	else
+		LootTrackerDB[raidid][lootid][LootTracker_dbfield_offspec] = true
+		LootTrackerDB[raidid][lootid][LootTracker_dbfield_cost]
+		
+		getglobal("LootTracker_ItemEditFrameOldPlayerGP"):SetText(LootTracker_BrowseTable[index].oldplayergp)
+		getglobal("LootTracker_ItemEditFrameCost"):SetText(LootTracker_BrowseTable[index].cost*2)
+		getglobal("LootTracker_ItemEditFrameNewPlayerGP"):SetText(LootTracker_BrowseTable[index].newplayergp)
+
+	end
+	LootTracker_RaidIDScrollFrame_Update()
+end
+		
+--Disenchant
+function LootTracker_ItemEditFrameOption2_onClick()
+
+end
 ---------------------------------------------------------
 --LootTracker Options Frame Functions
 ---------------------------------------------------------
-function LootTracker_OptionsFrame_OnShow()
-	if LootTrackerOptions["common"] == true then
-		getglobal("LootTracker_OptionsFrameCheckButton1"):SetChecked(true)
+function LootTracker_OptionsButton_OnClick()
+	if LootTracker_OptionsFrame:IsVisible() then
+		LootTracker_OptionsFrame:Hide()
 	else
-		getglobal("LootTracker_OptionsFrameCheckButton1"):SetChecked(false)
+		ShowUIPanel(LootTracker_OptionsFrame, 1)
+	end
+end
+
+function LootTracker_OptionsFrame_OnShow()
+	if LootTrackerOptions["enabled"] == true then
+		getglobal("LootTracker_OptionsFrameOption1"):SetChecked(true)
+		getglobal("LootTracker_OptionsFrameOption2"):SetEnabled(true)
+		getglobal("LootTracker_OptionsFrameOption3"):SetEnabled(true)
+		getglobal("LootTracker_OptionsFrameOption4"):SetEnabled(true)
+		getglobal("LootTracker_OptionsFrameOption5"):SetEnabled(true)
+		getglobal("LootTracker_OptionsFrameOption6"):SetEnabled(true)
+	else
+		getglobal("LootTracker_OptionsFrameOption1"):SetChecked(false)
+		getglobal("LootTracker_OptionsFrameOption2"):SetEnabled(false)
+		getglobal("LootTracker_OptionsFrameOption3"):SetEnabled(false)
+		getglobal("LootTracker_OptionsFrameOption4"):SetEnabled(false)
+		getglobal("LootTracker_OptionsFrameOption5"):SetEnabled(false)
+		getglobal("LootTracker_OptionsFrameOption6"):SetEnabled(false)
+	end
+	if LootTrackerOptions["common"] == true then
+		getglobal("LootTracker_OptionsFrameOption2"):SetChecked(true)
+	else
+		getglobal("LootTracker_OptionsFrameOption2"):SetChecked(false)
 	end
 	if LootTrackerOptions["uncommon"] == true then
-		getglobal("LootTracker_OptionsFrameCheckButton2"):SetChecked(true)
+		getglobal("LootTracker_OptionsFrameOption3"):SetChecked(true)
 	else
-		getglobal("LootTracker_OptionsFrameCheckButton2"):SetChecked(false)
+		getglobal("LootTracker_OptionsFrameOption3"):SetChecked(false)
 	end
 	if LootTrackerOptions["rare"] == true then
-		getglobal("LootTracker_OptionsFrameCheckButton3"):SetChecked(true)
+		getglobal("LootTracker_OptionsFrameOption4"):SetChecked(true)
 	else
-		getglobal("LootTracker_OptionsFrameCheckButton3"):SetChecked(false)
+		getglobal("LootTracker_OptionsFrameOption4"):SetChecked(false)
 	end
 	if LootTrackerOptions["epic"] == true then
-		getglobal("LootTracker_OptionsFrameCheckButton4"):SetChecked(true)
+		getglobal("LootTracker_OptionsFrameOption5"):SetChecked(true)
 	else
-		getglobal("LootTracker_OptionsFrameCheckButton4"):SetChecked(false)
+		getglobal("LootTracker_OptionsFrameOption5"):SetChecked(false)
 	end
 	if LootTrackerOptions["legendary"] == true then
-		getglobal("LootTracker_OptionsFrameCheckButton5"):SetChecked(true)
+		getglobal("LootTracker_OptionsFrameOption6"):SetChecked(true)
 	else
-		getglobal("LootTracker_OptionsFrameCheckButton5"):SetChecked(false)
+		getglobal("LootTracker_OptionsFrameOption6"):SetChecked(false)
 	end
+end
 
+--enabled
+function LootTracker_OptionsFrameOption1_onClick()
+	if LootTrackerOptions["enabled"] == true
+		LootTrackerOptions["enabled"] == false
+		
+		--disable checkbuttons
+		getglobal("LootTracker_OptionsFrameOption2"):SetEnabled(false)
+		getglobal("LootTracker_OptionsFrameOption3"):SetEnabled(false)
+		getglobal("LootTracker_OptionsFrameOption4"):SetEnabled(false)
+		getglobal("LootTracker_OptionsFrameOption5"):SetEnabled(false)
+		getglobal("LootTracker_OptionsFrameOption6"):SetEnabled(false)
+	else
+		LootTrackerOptions["enabled"] == true
+		
+		--enable checkbuttons
+		getglobal("LootTracker_OptionsFrameOption2"):SetEnabled(true)
+		getglobal("LootTracker_OptionsFrameOption3"):SetEnabled(true)
+		getglobal("LootTracker_OptionsFrameOption4"):SetEnabled(true)
+		getglobal("LootTracker_OptionsFrameOption5"):SetEnabled(true)
+		getglobal("LootTracker_OptionsFrameOption6"):SetEnabled(true)
+	end
+end
 
+--common
+function LootTracker_OptionsFrameOption2_onClick()
+	if LootTrackerOptions["common"] == true
+		LootTrackerOptions["common"] == false
+	else
+		LootTrackerOptions["common"] == true
+	end
+end
+
+--uncommon
+function LootTracker_OptionsFrameOption3_onClick()
+	if LootTrackerOptions["uncommon"] == true
+		LootTrackerOptions["uncommon"] == false
+	else
+		LootTrackerOptions["uncommon"] == true
+	end
+end
+
+--rare
+function LootTracker_OptionsFrameOption4_onClick()
+	if LootTrackerOptions["rare"] == true
+		LootTrackerOptions["rare"] == false
+	else
+		LootTrackerOptions["rare"] == true
+	end
+end
+
+--epic
+function LootTracker_OptionsFrameOption5_onClick()
+	if LootTrackerOptions["epic"] == true
+		LootTrackerOptions["epic"] == false
+	else
+		LootTrackerOptions["epic"] == true
+	end
+end
+
+--legendary
+function LootTracker_OptionsFrameOption6_onClick()
+	if LootTrackerOptions["legendary"] == true
+		LootTrackerOptions["legendary"] == false
+	else
+		LootTrackerOptions["legendary"] == true
+	end
 end
