@@ -271,6 +271,9 @@
 		<CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
 		<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
 		<Scripts>
+			<OnClick>
+				$parent_OnClick();
+			</OnClick>
 		</Scripts>
 	</CheckButton>
 
@@ -449,6 +452,23 @@
 				<Scripts>
 					<OnClick>
 						LootTracker_RaidIDButton_OnClick();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="LootTracker_OptionsButton" inherits="UIPanelButtonTemplate" text="Options">
+				<Size>
+					<AbsDimension x="100" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="LootTracker_RaidIDButton" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="300" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						LootTracker_OptionsButton_OnClick();
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -1397,7 +1417,7 @@
 					<OnClick>LootTracker_OptionsFrame:Hide();</OnClick>
 				</Scripts>
 			</Button>
-			<CheckButton name="$parentCheckButton1" inherits="LootTracker_OptionCheckButton">
+			<CheckButton name="$parentOption1" inherits="LootTracker_OptionCheckButton">
 				 <Anchors> 
 					<Anchor point="TOPLEFT">
 					  <Offset>
@@ -1407,13 +1427,26 @@
 				 </Anchors>      
 				<Scripts>
 				<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Track |cffffffffcommon|r Loot")
 				 </OnLoad>
 			 </Scripts>
 			</CheckButton>
-			<CheckButton name="$parentCheckButton2" inherits="LootTracker_OptionCheckButton">
+			<CheckButton name="$parentOption2" inherits="LootTracker_OptionCheckButton">
 				 <Anchors> 
 					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton1" relativePoint="BOTTOMLEFT">
+					  <Offset>
+							<AbsDimension x="0" y="0"/>
+						 </Offset>
+					 </Anchor>
+				 </Anchors>      
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Track |cffffffffcommon|r Loot")
+					 </OnLoad>
+				 </Scripts>
+			 </CheckButton>
+			<CheckButton name="$parentOption3" inherits="LootTracker_OptionCheckButton">
+				 <Anchors> 
+					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton2" relativePoint="BOTTOMLEFT">
 					  <Offset>
 							<AbsDimension x="0" y="0"/>
 						 </Offset>
@@ -1425,9 +1458,9 @@
 					 </OnLoad>
 				 </Scripts>
 			 </CheckButton>
-			<CheckButton name="$parentCheckButton3" inherits="LootTracker_OptionCheckButton">
+			<CheckButton name="$parentOption4" inherits="LootTracker_OptionCheckButton">
 				 <Anchors> 
-					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton2" relativePoint="BOTTOMLEFT">
+					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton3" relativePoint="BOTTOMLEFT">
 					  <Offset>
 							<AbsDimension x="0" y="0"/>
 						 </Offset>
@@ -1439,21 +1472,7 @@
 					 </OnLoad>
 				 </Scripts>
 			 </CheckButton>
-			<CheckButton name="$parentCheckButton4" inherits="LootTracker_OptionCheckButton">
-				 <Anchors> 
-					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton3" relativePoint="BOTTOMLEFT">
-					  <Offset>
-							<AbsDimension x="0" y="0"/>
-						 </Offset>
-					 </Anchor>
-				 </Anchors>      
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Track |cffa335eeepic|r Loot")
-					 </OnLoad>
-				 </Scripts>
-			 </CheckButton>
-			<CheckButton name="$parentCheckButton5" inherits="LootTracker_OptionCheckButton">
+			<CheckButton name="$parentOption5" inherits="LootTracker_OptionCheckButton">
 				 <Anchors> 
 					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton4" relativePoint="BOTTOMLEFT">
 					  <Offset>
@@ -1463,7 +1482,23 @@
 				 </Anchors>      
 				<Scripts>
 					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Track |cffa335eeepic|r Loot")
+
+					 </OnLoad>
+				 </Scripts>
+			 </CheckButton>
+			<CheckButton name="$parentOption6" inherits="LootTracker_OptionCheckButton">
+				 <Anchors> 
+					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton5" relativePoint="BOTTOMLEFT">
+					  <Offset>
+							<AbsDimension x="0" y="0"/>
+						 </Offset>
+					 </Anchor>
+				 </Anchors>      
+				<Scripts>
+					<OnLoad>
 						getglobal(this:GetName().."Text"):SetText("Track |cffff8000legendary|r Loot")
+
 					 </OnLoad>
 				 </Scripts>
 			 </CheckButton>
