@@ -32,3 +32,6 @@ export with timestamp and gp price
 use CTRL+C to copy all and paste it on your guilds homepage
 
 ![Detailed Export](http://i.imgur.com/ZG8POmH.jpg "Detailed Export")
+
+### console help
+![Console](http://i.imgur.com/y8UHMWs.jpg "Console")
