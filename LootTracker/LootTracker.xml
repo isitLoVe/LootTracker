@@ -272,11 +272,42 @@
 		<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
 		<Scripts>
 			<OnClick>
-				$parent_OnClick();
+				LootTracker_OptionCheckButton_OnClick(this:GetID())
 			</OnClick>
 		</Scripts>
 	</CheckButton>
 
+	<CheckButton name="LootTracker_ItemEditCheckButton" virtual="true">
+		<HitRectInsets>
+			<AbsInset left="0" right="-100" top="0" bottom="0"/>
+		</HitRectInsets>
+		<Size>
+			<AbsDimension x="32" y="32"/>
+		</Size>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentText" inherits="GameFontNormalSmall">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="RIGHT">
+							<Offset>
+								<AbsDimension x="-2" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+		<PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+		<HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+		<CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+		<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+		<Scripts>
+			<OnClick>
+				LootTracker_ItemEditCheckButton_OnClick(this:GetID())
+			</OnClick>
+		</Scripts>
+	</CheckButton>
 	
 	<Frame name="LootTracker_BrowseFrame" frameStrata="HIGH" toplevel="true" parent="UIParent" movable="true" enableMouse="true" hidden="true" clampedToScreen="true">
 		<Size>
@@ -462,7 +493,7 @@
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="LootTracker_RaidIDButton" relativePoint="RIGHT">
 						<Offset>
-							<AbsDimension x="300" y="0"/>
+							<AbsDimension x="475" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -1324,7 +1355,7 @@
 					<OnClick>LootTracker_ItemEditFrame:Hide();</OnClick>
 				</Scripts>
 			</Button>
-			<CheckButton id="1" inherits="LootTracker_OptionCheckButton" name="$parentOption1">
+			<CheckButton id="1" inherits="LootTracker_ItemEditCheckButton" name="$parentOption1">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parent">
 						<Offset>
@@ -1332,13 +1363,13 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<Scripts>
+			<Scripts>
 				<OnLoad>
 					getglobal(this:GetName().."Text"):SetText("Offspec")
 				 </OnLoad>
 			 </Scripts>
 			</CheckButton>
-			<CheckButton id="2" inherits="LootTracker_OptionCheckButton" name="$parentOption2">
+			<CheckButton id="2" inherits="LootTracker_ItemEditCheckButton" name="$parentOption2">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$parentOption1">
 						<Offset>
@@ -1359,7 +1390,7 @@
 	
 	<Frame name="LootTracker_OptionsFrame" frameStrata="DIALOG" toplevel="true" parent="UIParent" movable="false" enableMouse="true" hidden="true" clampedToScreen="true">
 		<Size>
-			<AbsDimension x="300" y="400"/>
+			<AbsDimension x="250" y="280"/>
 		</Size>
 		<Anchors>
 			<Anchor point="CENTER">
@@ -1417,7 +1448,7 @@
 					<OnClick>LootTracker_OptionsFrame:Hide();</OnClick>
 				</Scripts>
 			</Button>
-			<CheckButton name="$parentOption1" inherits="LootTracker_OptionCheckButton">
+			<CheckButton id="1" name="$parentOption1" inherits="LootTracker_OptionCheckButton">
 				 <Anchors> 
 					<Anchor point="TOPLEFT">
 					  <Offset>
@@ -1426,13 +1457,14 @@
 					 </Anchor>
 				 </Anchors>      
 				<Scripts>
-				<OnLoad>
-				 </OnLoad>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Enable LootTracker")
+					 </OnLoad>
 			 </Scripts>
 			</CheckButton>
-			<CheckButton name="$parentOption2" inherits="LootTracker_OptionCheckButton">
+			<CheckButton id="2" name="$parentOption2" inherits="LootTracker_OptionCheckButton">
 				 <Anchors> 
-					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton1" relativePoint="BOTTOMLEFT">
+					<Anchor point="TOPLEFT" relativeTo="$parentOption1" relativePoint="BOTTOMLEFT">
 					  <Offset>
 							<AbsDimension x="0" y="0"/>
 						 </Offset>
@@ -1444,9 +1476,9 @@
 					 </OnLoad>
 				 </Scripts>
 			 </CheckButton>
-			<CheckButton name="$parentOption3" inherits="LootTracker_OptionCheckButton">
+			<CheckButton id="3" name="$parentOption3" inherits="LootTracker_OptionCheckButton">
 				 <Anchors> 
-					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton2" relativePoint="BOTTOMLEFT">
+					<Anchor point="TOPLEFT" relativeTo="$parentOption2" relativePoint="BOTTOMLEFT">
 					  <Offset>
 							<AbsDimension x="0" y="0"/>
 						 </Offset>
@@ -1458,9 +1490,9 @@
 					 </OnLoad>
 				 </Scripts>
 			 </CheckButton>
-			<CheckButton name="$parentOption4" inherits="LootTracker_OptionCheckButton">
+			<CheckButton id="4" name="$parentOption4" inherits="LootTracker_OptionCheckButton">
 				 <Anchors> 
-					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton3" relativePoint="BOTTOMLEFT">
+					<Anchor point="TOPLEFT" relativeTo="$parentOption3" relativePoint="BOTTOMLEFT">
 					  <Offset>
 							<AbsDimension x="0" y="0"/>
 						 </Offset>
@@ -1472,9 +1504,9 @@
 					 </OnLoad>
 				 </Scripts>
 			 </CheckButton>
-			<CheckButton name="$parentOption5" inherits="LootTracker_OptionCheckButton">
+			<CheckButton id="5" name="$parentOption5" inherits="LootTracker_OptionCheckButton">
 				 <Anchors> 
-					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton4" relativePoint="BOTTOMLEFT">
+					<Anchor point="TOPLEFT" relativeTo="$parentOption4" relativePoint="BOTTOMLEFT">
 					  <Offset>
 							<AbsDimension x="0" y="0"/>
 						 </Offset>
@@ -1487,9 +1519,9 @@
 					 </OnLoad>
 				 </Scripts>
 			 </CheckButton>
-			<CheckButton name="$parentOption6" inherits="LootTracker_OptionCheckButton">
+			<CheckButton id="6" name="$parentOption6" inherits="LootTracker_OptionCheckButton">
 				 <Anchors> 
-					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton5" relativePoint="BOTTOMLEFT">
+					<Anchor point="TOPLEFT" relativeTo="$parentOption5" relativePoint="BOTTOMLEFT">
 					  <Offset>
 							<AbsDimension x="0" y="0"/>
 						 </Offset>
@@ -1498,10 +1530,26 @@
 				<Scripts>
 					<OnLoad>
 						getglobal(this:GetName().."Text"):SetText("Track |cffff8000legendary|r Loot")
-
 					 </OnLoad>
 				 </Scripts>
 			 </CheckButton>
+			<Button name="LootTracker_OptionsReset" inherits="UIPanelButtonTemplate" text="Reset Database">
+				<Size>
+					<AbsDimension x="120" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentOption6" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-10"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						LootTracker_OptionsReset_OnClick();
+					</OnClick>
+				</Scripts>
+			</Button>
 		</Frames>
 		<Scripts>
 			<OnShow>

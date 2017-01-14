@@ -17,15 +17,15 @@ local function LootTracker_Initialize()
 	end
 
 	for i in LootTrackerOptions_DefaultSettings do
-		if (not LootTrackerOptions[i]) then
-			LootTrackerOptions[i] = LootTrackerOptions_DefaultSettings[i];
+		if (LootTrackerOptions[i] == nil) then
+			LootTrackerOptions[i] = LootTrackerOptions_DefaultSettings[i]
 		end
 	end
 end
 	
 function LootTracker_OnLoad()
 
-	DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffa335eeLootTracker|r v%s by %s", GetAddOnMetadata("LootTracker", "Version"), GetAddOnMetadata("LootTracker", "Author")));
+	DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffa335eeLootTracker|r v%s by %s. Type /lt or /loottracker for more info", GetAddOnMetadata("LootTracker", "Version"), GetAddOnMetadata("LootTracker", "Author")));
     this:RegisterEvent("VARIABLES_LOADED");
     this:RegisterEvent("CHAT_MSG_LOOT")
 	--CHAT_MSG_LOOT examples:
@@ -119,11 +119,9 @@ end
 function LootTracker_SlashCommand(msg)
 
 	if msg == "help" then
-		DEFAULT_CHAT_FRAME:AddMessage("LootTracker DB is saved to: WTF\Account\ACCOUNTNAME\SavedVariables\LootTracker.lua")
 		DEFAULT_CHAT_FRAME:AddMessage("LootTracker usage:")
-		DEFAULT_CHAT_FRAME:AddMessage("/lt or /loottracker { help | gui | enable | disable | toggle | show | options | reset | uncommon | common | rare | epic | legendary }")
+		DEFAULT_CHAT_FRAME:AddMessage("/lt or /loottracker { help |  enable | disable | toggle | show | options | reset | uncommon | common | rare | epic | legendary }")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9help|r: prints out this help")
-		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9gui|r: shows the GUI")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9enable|r: enables loot tracking")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9disable|r: disables loot tracking")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9toggle|r: toggles loot tracking")
@@ -135,6 +133,7 @@ function LootTracker_SlashCommand(msg)
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9rare|r: toggles tracking rare loot")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9epic|r: toggles tracking epic loot")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9legendary|r: toggles tracking legendary loot")
+	elseif msg == "toggle" then 
 		if LootTrackerOptions["enabled"] == true then
 			LootTrackerOptions["enabled"] = false
 			DEFAULT_CHAT_FRAME:AddMessage("LootTracker state: |cffff0000disabled|r")
@@ -194,8 +193,7 @@ function LootTracker_SlashCommand(msg)
 		end
 		
 	elseif msg == "reset" then
-		LootTrackerDB = {}
-		DEFAULT_CHAT_FRAME:AddMessage("Loot Database has been reset")
+		LootTracker_ResetDB()
 	elseif msg == "common" then		
 		if LootTrackerOptions["common"] == true then
 			LootTrackerOptions["common"] = false
@@ -236,32 +234,35 @@ function LootTracker_SlashCommand(msg)
 			LootTrackerOptions["legendary"] = true
 			DEFAULT_CHAT_FRAME:AddMessage("Tracking |cffff8000legendary|r loot: |cff00ff00enabled|r")
 		end
-	elseif msg == "gui" then
+	else
 		if (LootTracker_BrowseFrame:IsVisible() or LootTracker_RaidIDFrame:IsVisible()) then
 			LootTracker_BrowseFrame:Hide()
 			LootTracker_RaidIDFrame:Hide()
 		else
 			ShowUIPanel(LootTracker_BrowseFrame, 1)
 		end
+	end
+end
+
+function LootTracker_GetCosts(itemid)
+
+	if guildName == "De Profundis" then
+		CostDB = DeProfundis_GP
+	elseif guildName == "Discordia" then
+		CostDB = Discordia_GP
 	else
-		DEFAULT_CHAT_FRAME:AddMessage("LootTracker DB is saved to: WTF\Account\ACCOUNTNAME\SavedVariables\LootTracker.lua")
-		DEFAULT_CHAT_FRAME:AddMessage("LootTracker usage:")
-		DEFAULT_CHAT_FRAME:AddMessage("/lt or /loottracker { help | gui | enable | disable | toggle | show | options | reset | uncommon | common | rare | epic | legendary }")
-		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9help|r: prints out this help")
-		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9gui|r: shows the GUI")
-		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9enable|r: enables loot tracking")
-		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9disable|r: disables loot tracking")
-		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9toggle|r: toggles loot tracking")
-		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9show|r: shows the current configuration")
-		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9options|r: shows the option menu")
-		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9reset|r: resets the loot database")
-		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9uncommon|r: toggles tracking uncommon loot")
-		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9common|r: toggles tracking common loot")
-		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9rare|r: toggles tracking rare loot")
-		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9epic|r: toggles tracking epic loot")
-		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9legendary|r: toggles tracking legendary loot")
+		CostDB = DeProfundis_GP
 	end
 
+	if CostDB and itemid then
+		for k, v in pairs(CostDB) do
+			if k == "Item"..itemid then
+				return v
+			end
+		end
+	end
+	
+	return 0
 end
 
 
@@ -297,27 +298,8 @@ function LootTracker_AddtoDB(playername, itemname, itemid, rarity, offspec, de)
 			end
 	end
 	
-	--GP price
-	--De Profundis
-	if guildName == "De Profundis" then
-		CostDB = DeProfundis_GP
-	--elseif guildName == "Discordia" then
-		--CostDB = Discordia_GP
-	else
-		CostDB = DeProfundis_GP
-	end
-
-	if CostDB and itemid then
-		for k, v in pairs(CostDB) do
-			if k == "Item"..itemid then
-				cost = v
-				DEFAULT_CHAT_FRAME:AddMessage("itemid:"..itemid)
-				DEFAULT_CHAT_FRAME:AddMessage("cost:"..cost)
-			else
-				cost = nil
-			end
-		end
-	end
+	--calculate costs
+	cost = LootTracker_GetCosts(itemid)
 	
 
 	--import the itemname into the db
@@ -344,9 +326,9 @@ function LootTracker_AddtoDB(playername, itemname, itemid, rarity, offspec, de)
 				LootTrackerDB[raidid][1][LootTracker_dbfield_newplayergp] = tostring(oldplayergp+cost)
 			else
 				if oldplayergp then
-					LootTrackerDB[raidid][lootid][LootTracker_dbfield_newplayergp] = oldplayergp
+					LootTrackerDB[raidid][1][LootTracker_dbfield_newplayergp] = oldplayergp
 				else
-					LootTrackerDB[raidid][lootid][LootTracker_dbfield_newplayergp] = "0"
+					LootTrackerDB[raidid][1][LootTracker_dbfield_newplayergp] = "0"
 				end
 			end
 			
@@ -411,18 +393,16 @@ function LootTracker_AddtoDB(playername, itemname, itemid, rarity, offspec, de)
 	end
 end
 
-function LootTracker_Database()
-	DEFAULT_CHAT_FRAME:AddMessage("Dumping Database:")
+function LootTracker_ResetDB()
+	LootTrackerDB = {}
+	DEFAULT_CHAT_FRAME:AddMessage("Loot Database has been reset")
 end
-
 
 ---------------------------------------------------------
 --LootTracker ItemBrowse Frame Functions
 ---------------------------------------------------------
 function LootTracker_Main_OnShow()
-	--if (MI2BSave and MI2BSave.framepos_L and MI2BSave.framepos_T) then
-	--	this:SetPoint("TOPLEFT", "UIParent", "BOTTOMLEFT", MI2BSave.framepos_L, MI2BSave.framepos_T);
-	--end
+
 end
 
 -- this function is called when the frame starts being dragged around
@@ -436,10 +416,6 @@ end
 function LootTracker_Main_OnMouseUp(button)
 	if (button == "LeftButton") then
 		this:StopMovingOrSizing()
-		
-		-- save the position 
-		--MI2BSave.framepos_L = this:GetLeft();
-		--MI2BSave.framepos_T = this:GetTop();
 
 	end
 end
@@ -495,9 +471,10 @@ function LootTracker_ListScrollFrame_Update()
 			LootTracker_BrowseTable[index].de = LootTrackerDB[raidid][index][LootTracker_dbfield_de]
 			--for tooltip
 			LootTracker_BrowseTable[index].itemid = LootTrackerDB[raidid][index][LootTracker_dbfield_itemid]
-			--for Item Edit GUI
+			--for itemedit GUI
 			LootTracker_BrowseTable[index].oldplayergp = LootTrackerDB[raidid][index][LootTracker_dbfield_oldplayergp]
 			LootTracker_BrowseTable[index].newplayergp = LootTrackerDB[raidid][index][LootTracker_dbfield_newplayergp]
+			LootTracker_BrowseTable[index].raidid = raidid
 		end
 	
 		
@@ -525,8 +502,19 @@ function LootTracker_ListScrollFrame_Update()
 				getglobal("LootTracker_List"..line.."TextPlayername"):SetText(LootTracker_BrowseTable[lineplusoffset].playername)
 				getglobal("LootTracker_List"..line.."TextItemName"):SetText(LootTracker_BrowseTable[lineplusoffset].itemname)
 				getglobal("LootTracker_List"..line.."TextCost"):SetText(LootTracker_BrowseTable[lineplusoffset].cost)
-				getglobal("LootTracker_List"..line.."TextOffspec"):SetText(LootTracker_BrowseTable[lineplusoffset].offspec)
-				getglobal("LootTracker_List"..line.."TextDE"):SetText(LootTracker_BrowseTable[lineplusoffset].de)
+				
+				if LootTracker_BrowseTable[lineplusoffset].offspec == true then
+					getglobal("LootTracker_List"..line.."TextOffspec"):SetText("yes")
+				else
+					getglobal("LootTracker_List"..line.."TextOffspec"):SetText("no")
+				end
+				
+				if LootTracker_BrowseTable[lineplusoffset].de == true then 
+					getglobal("LootTracker_List"..line.."TextDE"):SetText("yes")
+				else
+					getglobal("LootTracker_List"..line.."TextDE"):SetText("no")
+				end
+				
 				getglobal("LootTracker_List"..line):Show()
 			 else
 				getglobal("LootTracker_List"..line):Hide()
@@ -540,27 +528,30 @@ end
 
 --fires when the headline in the browse frame list is clicked
 function LootTracker_SortTimestamp_OnClick(button)
-	 --DEFAULT_CHAT_FRAME:AddMessage("SortTimestamp"..button)
+	--table.sort(LootTracker_BrowseTable, )
+	--LootTracker_ListScrollFrame_Update()
+	
+	 DEFAULT_CHAT_FRAME:AddMessage("sorting not yet supported")
 end
 
 function LootTracker_SortPlayername_OnClick(button)
-	 --DEFAULT_CHAT_FRAME:AddMessage("SortPlayername"..button)
+	 DEFAULT_CHAT_FRAME:AddMessage("sorting not yet supported")
 end
 
 function LootTracker_SortItemName_OnClick(button)
-	 --DEFAULT_CHAT_FRAME:AddMessage("SortItemName"..button)
+	 DEFAULT_CHAT_FRAME:AddMessage("sorting not yet supported")
 end
 
 function LootTracker_SortCost_OnClick(button)
-	 --DEFAULT_CHAT_FRAME:AddMessage("SortCost"..button)
+	 DEFAULT_CHAT_FRAME:AddMessage("sorting not yet supported")
 end
 
 function LootTracker_SortOffspec_OnClick(button)
-	 --DEFAULT_CHAT_FRAME:AddMessage("SortOffspec"..button)
+	 DEFAULT_CHAT_FRAME:AddMessage("sorting not yet supported")
 end
 
 function LootTracker_SortDE_OnClick(button)
-	 --DEFAULT_CHAT_FRAME:AddMessage("SortDE"..button)
+	 DEFAULT_CHAT_FRAME:AddMessage("sorting not yet supported")
 end
 
 --fires when a line in the browse frame list is clicked
@@ -659,35 +650,65 @@ function LootTracker_ItemEdit(index)
 	else
 		getglobal("LootTracker_ItemEditFrameOption2"):SetChecked(false)
 	end
-
+	
+	--fill vars for itemedit
+	LootTracker_ItemEditDB = {
+	raidid = LootTracker_BrowseTable[index].raidid,
+	index = index,
+	timestamp = LootTracker_BrowseTable[index].timestamp,
+	itemname = LootTracker_BrowseTable[index].itemname,
+	itemid = LootTracker_BrowseTable[index].itemid,
+	playername = LootTracker_BrowseTable[index].playername,
+	oldplayergp = LootTracker_BrowseTable[index].oldplayergp,
+	cost = LootTracker_BrowseTable[index].cost,
+	newplayergp = LootTracker_BrowseTable[index].newplayergp
+	}
+	
+	
 	ShowUIPanel(LootTracker_ItemEditFrame, 1)
 end
 
---Offspec
-function LootTracker_ItemEditFrameOption1_onClick()
-	if LootTracker_BrowseTable[index].offspec then
-		DEFAULT_CHAT_FRAME:AddMessage("offspec ".. )
-		LootTrackerDB[raidid][lootid][LootTracker_dbfield_offspec] = false
-				
-		getglobal("LootTracker_ItemEditFrameOldPlayerGP"):SetText(LootTracker_BrowseTable[index].oldplayergp)
-		getglobal("LootTracker_ItemEditFrameCost"):SetText(LootTracker_BrowseTable[index].cost/2)
-		getglobal("LootTracker_ItemEditFrameNewPlayerGP"):SetText(LootTracker_BrowseTable[index].newplayergp)
-	else
-		LootTrackerDB[raidid][lootid][LootTracker_dbfield_offspec] = true
-		LootTrackerDB[raidid][lootid][LootTracker_dbfield_cost]
+function LootTracker_ItemEditCheckButton_OnClick(id)
+	--offspec
+	if id == 1 then
+		if LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_offspec] == true then
 		
-		getglobal("LootTracker_ItemEditFrameOldPlayerGP"):SetText(LootTracker_BrowseTable[index].oldplayergp)
-		getglobal("LootTracker_ItemEditFrameCost"):SetText(LootTracker_BrowseTable[index].cost*2)
-		getglobal("LootTracker_ItemEditFrameNewPlayerGP"):SetText(LootTracker_BrowseTable[index].newplayergp)
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_offspec]	= false
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost] = LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost]*2
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_newplayergp] = LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_oldplayergp] + LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost]
 
+		elseif LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_offspec] == false then
+			
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_offspec]	= true
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost] = LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost]/2
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_newplayergp] = LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_oldplayergp] + LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost]
+		end
+	--disenchant
+	elseif id == 2 then
+		if LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_de] == true then
+		
+			--recalc costs
+			cost_orig = LootTracker_GetCosts(LootTracker_ItemEditDB.itemid)
+			
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_de]	= false
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost] = cost_orig
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_newplayergp] = LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_oldplayergp] + LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost]
+		
+		elseif LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_de] == false then
+			
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_de]	= true
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost] = 0
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_newplayergp] = LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_oldplayergp] + LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost]
+		end
 	end
-	LootTracker_RaidIDScrollFrame_Update()
+	
+	getglobal("LootTracker_ItemEditFrameOldPlayerGP"):SetText(LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_oldplayergp])
+	getglobal("LootTracker_ItemEditFrameCost"):SetText(LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost])
+	getglobal("LootTracker_ItemEditFrameNewPlayerGP"):SetText(LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_newplayergp])
+	LootTracker_ListScrollFrame_Update()
 end
 		
---Disenchant
-function LootTracker_ItemEditFrameOption2_onClick()
 
-end
 ---------------------------------------------------------
 --LootTracker Options Frame Functions
 ---------------------------------------------------------
@@ -702,18 +723,18 @@ end
 function LootTracker_OptionsFrame_OnShow()
 	if LootTrackerOptions["enabled"] == true then
 		getglobal("LootTracker_OptionsFrameOption1"):SetChecked(true)
-		getglobal("LootTracker_OptionsFrameOption2"):SetEnabled(true)
-		getglobal("LootTracker_OptionsFrameOption3"):SetEnabled(true)
-		getglobal("LootTracker_OptionsFrameOption4"):SetEnabled(true)
-		getglobal("LootTracker_OptionsFrameOption5"):SetEnabled(true)
-		getglobal("LootTracker_OptionsFrameOption6"):SetEnabled(true)
+		getglobal("LootTracker_OptionsFrameOption2"):Enable()
+		getglobal("LootTracker_OptionsFrameOption3"):Enable()
+		getglobal("LootTracker_OptionsFrameOption4"):Enable()
+		getglobal("LootTracker_OptionsFrameOption5"):Enable()
+		getglobal("LootTracker_OptionsFrameOption6"):Enable()
 	else
 		getglobal("LootTracker_OptionsFrameOption1"):SetChecked(false)
-		getglobal("LootTracker_OptionsFrameOption2"):SetEnabled(false)
-		getglobal("LootTracker_OptionsFrameOption3"):SetEnabled(false)
-		getglobal("LootTracker_OptionsFrameOption4"):SetEnabled(false)
-		getglobal("LootTracker_OptionsFrameOption5"):SetEnabled(false)
-		getglobal("LootTracker_OptionsFrameOption6"):SetEnabled(false)
+		getglobal("LootTracker_OptionsFrameOption2"):Disable()
+		getglobal("LootTracker_OptionsFrameOption3"):Disable()
+		getglobal("LootTracker_OptionsFrameOption4"):Disable()
+		getglobal("LootTracker_OptionsFrameOption5"):Disable()
+		getglobal("LootTracker_OptionsFrameOption6"):Disable()
 	end
 	if LootTrackerOptions["common"] == true then
 		getglobal("LootTracker_OptionsFrameOption2"):SetChecked(true)
@@ -742,70 +763,62 @@ function LootTracker_OptionsFrame_OnShow()
 	end
 end
 
---enabled
-function LootTracker_OptionsFrameOption1_onClick()
-	if LootTrackerOptions["enabled"] == true
-		LootTrackerOptions["enabled"] == false
-		
-		--disable checkbuttons
-		getglobal("LootTracker_OptionsFrameOption2"):SetEnabled(false)
-		getglobal("LootTracker_OptionsFrameOption3"):SetEnabled(false)
-		getglobal("LootTracker_OptionsFrameOption4"):SetEnabled(false)
-		getglobal("LootTracker_OptionsFrameOption5"):SetEnabled(false)
-		getglobal("LootTracker_OptionsFrameOption6"):SetEnabled(false)
-	else
-		LootTrackerOptions["enabled"] == true
-		
-		--enable checkbuttons
-		getglobal("LootTracker_OptionsFrameOption2"):SetEnabled(true)
-		getglobal("LootTracker_OptionsFrameOption3"):SetEnabled(true)
-		getglobal("LootTracker_OptionsFrameOption4"):SetEnabled(true)
-		getglobal("LootTracker_OptionsFrameOption5"):SetEnabled(true)
-		getglobal("LootTracker_OptionsFrameOption6"):SetEnabled(true)
+function LootTracker_OptionCheckButton_OnClick(id)
+	if id == 1 then
+		if LootTrackerOptions["enabled"] == true then
+			LootTrackerOptions["enabled"] = false
+			
+			--disable checkbuttons
+			getglobal("LootTracker_OptionsFrameOption2"):Disable()
+			getglobal("LootTracker_OptionsFrameOption3"):Disable()
+			getglobal("LootTracker_OptionsFrameOption4"):Disable()
+			getglobal("LootTracker_OptionsFrameOption5"):Disable()
+			getglobal("LootTracker_OptionsFrameOption6"):Disable()
+		else
+			LootTrackerOptions["enabled"] = true
+			
+			--enable checkbuttons
+			getglobal("LootTracker_OptionsFrameOption2"):Enable()
+			getglobal("LootTracker_OptionsFrameOption3"):Enable()
+			getglobal("LootTracker_OptionsFrameOption4"):Enable()
+			getglobal("LootTracker_OptionsFrameOption5"):Enable()
+			getglobal("LootTracker_OptionsFrameOption6"):Enable()
+		end
+	elseif id == 2 then
+		if LootTrackerOptions["common"] == true then
+			LootTrackerOptions["common"] = false
+		else
+			LootTrackerOptions["common"] = true
+		end
+	elseif id == 3 then
+		if LootTrackerOptions["uncommon"] == true then
+			LootTrackerOptions["uncommon"] = false
+		else
+			LootTrackerOptions["uncommon"] = true
+		end
+	elseif id == 4 then
+		if LootTrackerOptions["rare"] == true then
+			LootTrackerOptions["rare"] = false
+		else
+			LootTrackerOptions["rare"] = true
+		end
+	elseif id == 5 then
+		if LootTrackerOptions["epic"] == true then
+			LootTrackerOptions["epic"] = false
+		else
+			LootTrackerOptions["epic"] = true
+		end
+	elseif id == 6 then
+		if LootTrackerOptions["legendary"] == true then
+			LootTrackerOptions["legendary"] = false
+		else
+			LootTrackerOptions["legendary"] = true
+		end
 	end
 end
 
---common
-function LootTracker_OptionsFrameOption2_onClick()
-	if LootTrackerOptions["common"] == true
-		LootTrackerOptions["common"] == false
-	else
-		LootTrackerOptions["common"] == true
-	end
-end
-
---uncommon
-function LootTracker_OptionsFrameOption3_onClick()
-	if LootTrackerOptions["uncommon"] == true
-		LootTrackerOptions["uncommon"] == false
-	else
-		LootTrackerOptions["uncommon"] == true
-	end
-end
-
---rare
-function LootTracker_OptionsFrameOption4_onClick()
-	if LootTrackerOptions["rare"] == true
-		LootTrackerOptions["rare"] == false
-	else
-		LootTrackerOptions["rare"] == true
-	end
-end
-
---epic
-function LootTracker_OptionsFrameOption5_onClick()
-	if LootTrackerOptions["epic"] == true
-		LootTrackerOptions["epic"] == false
-	else
-		LootTrackerOptions["epic"] == true
-	end
-end
-
---legendary
-function LootTracker_OptionsFrameOption6_onClick()
-	if LootTrackerOptions["legendary"] == true
-		LootTrackerOptions["legendary"] == false
-	else
-		LootTrackerOptions["legendary"] == true
-	end
+function LootTracker_OptionsReset_OnClick() 
+	LootTracker_ResetDB()
+	LootTracker_RaidIDScrollFrame_Update()
+	LootTracker_ListScrollFrame_Update()
 end
