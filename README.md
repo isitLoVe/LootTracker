@@ -6,5 +6,5 @@ Just edit the table in the file LootTrackerGP.lua / You need the itemid and the 
 itemid can be found at http://db.vanillagaming.org/?item=22630
 
 
-MainWindow
+[Imgur](http://i.imgur.com/3yPSkCj.jpg)
 
