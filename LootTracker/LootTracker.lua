@@ -4,7 +4,9 @@ local LootTrackerOptions_DefaultSettings = {
 	common = false,
 	rare = true,
 	epic = true,
-	legendary = true
+	legendary = true,
+	timestamp = false,
+	cost = false
 }
 
 ---------------------------------------------------------
@@ -120,7 +122,7 @@ function LootTracker_SlashCommand(msg)
 
 	if msg == "help" then
 		DEFAULT_CHAT_FRAME:AddMessage("LootTracker usage:")
-		DEFAULT_CHAT_FRAME:AddMessage("/lt or /loottracker { help |  enable | disable | toggle | show | options | reset | uncommon | common | rare | epic | legendary }")
+		DEFAULT_CHAT_FRAME:AddMessage("/lt or /loottracker { help |  enable | disable | toggle | show | options | reset | uncommon | common | rare | epic | legendary | timestamp | cost}")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9help|r: prints out this help")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9enable|r: enables loot tracking")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9disable|r: disables loot tracking")
@@ -133,6 +135,8 @@ function LootTracker_SlashCommand(msg)
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9rare|r: toggles tracking rare loot")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9epic|r: toggles tracking epic loot")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9legendary|r: toggles tracking legendary loot")
+		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9timestamp|r: toggles exporting with timestamps")
+		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9cost|r: toggles exporting with GP price")
 	elseif msg == "toggle" then 
 		if LootTrackerOptions["enabled"] == true then
 			LootTrackerOptions["enabled"] = false
@@ -184,6 +188,18 @@ function LootTracker_SlashCommand(msg)
 		elseif LootTrackerOptions["legendary"] == false then
 			DEFAULT_CHAT_FRAME:AddMessage("Tracking |cffff8000legendary|r loot: |cffff0000disabled|r")
 		end
+		
+		if LootTrackerOptions["timestamp"] == true then
+			DEFAULT_CHAT_FRAME:AddMessage("Exporting with timestamps: |cff00ff00enabled|r")
+		elseif LootTrackerOptions["timestamp"] == false then
+			DEFAULT_CHAT_FRAME:AddMessage("Exporting with timestamps: |cffff0000disabled|r")
+		end
+		
+		if LootTrackerOptions["cost"] == true then
+			DEFAULT_CHAT_FRAME:AddMessage("Exporting with GP price: |cff00ff00enabled|r")
+		elseif LootTrackerOptions["cost"] == false then
+			DEFAULT_CHAT_FRAME:AddMessage("Exporting with GP price: |cffff0000disabled|r")
+		end
 
 	elseif msg == "options" then
 		if LootTracker_OptionsFrame:IsVisible() then
@@ -233,6 +249,23 @@ function LootTracker_SlashCommand(msg)
 		elseif LootTrackerOptions["legendary"] == false then
 			LootTrackerOptions["legendary"] = true
 			DEFAULT_CHAT_FRAME:AddMessage("Tracking |cffff8000legendary|r loot: |cff00ff00enabled|r")
+		end
+	elseif msg == "timestamp" then		
+		if LootTrackerOptions["timestamp"] == true then
+			LootTrackerOptions["timestamp"] = false
+			DEFAULT_CHAT_FRAME:AddMessage("Exporting with timestamps: |cffff0000disabled|r")
+		elseif LootTrackerOptions["timestamp"] == false then
+			LootTrackerOptions["timestamp"] = true
+			DEFAULT_CHAT_FRAME:AddMessage("Exporting with timestamps: |cff00ff00enabled|r")
+
+		end
+	elseif msg == "cost" then		
+		if LootTrackerOptions["cost"] == true then
+			LootTrackerOptions["cost"] = false
+			DEFAULT_CHAT_FRAME:AddMessage("Exporting with GP price: |cffff0000disabled|r")
+		elseif LootTrackerOptions["cost"] == false then
+			LootTrackerOptions["cost"] = true
+			DEFAULT_CHAT_FRAME:AddMessage("Exporting with GP price: |cff00ff00enabled|r")
 		end
 	else
 		if (LootTracker_BrowseFrame:IsVisible() or LootTracker_RaidIDFrame:IsVisible()) then
@@ -396,6 +429,50 @@ end
 function LootTracker_ResetDB()
 	LootTrackerDB = {}
 	DEFAULT_CHAT_FRAME:AddMessage("Loot Database has been reset")
+end
+
+function LootTracker_ExportRaid(raidid, timestamp, cost)
+	--check raidid
+	raidfound = false
+	if raidid and (string.len(raidid) >= 1) then
+		for k in pairs(LootTrackerDB) do
+			if k == raidid then
+				raidfound = true
+			end
+		end
+	end
+	
+	LootTracker_ExportData = nil
+	
+	if raidfound == true then
+		LootTracker_ExportData = raidid.."\n\n"
+		for index in LootTrackerDB[raidid] do
+			if timestamp == true then
+				LootTracker_ExportData = LootTracker_ExportData .. LootTrackerDB[raidid][index][LootTracker_dbfield_timestamp] .. " - "
+			end
+			LootTracker_ExportData = LootTracker_ExportData .. LootTrackerDB[raidid][index][LootTracker_dbfield_itemname]
+			if LootTrackerDB[raidid][index][LootTracker_dbfield_de] == true then
+				LootTracker_ExportData = LootTracker_ExportData .. ": disenchanted"
+			else
+				LootTracker_ExportData = LootTracker_ExportData  .. ": " .. LootTrackerDB[raidid][index][LootTracker_dbfield_playername]
+			end
+			if LootTrackerDB[raidid][index][LootTracker_dbfield_offspec] == true then
+				LootTracker_ExportData = LootTracker_ExportData .. " - offspec"
+			end
+			if cost and LootTrackerDB[raidid][index][LootTracker_dbfield_de] == false then
+				LootTracker_ExportData = LootTracker_ExportData  .. " - " .. LootTrackerDB[raidid][index][LootTracker_dbfield_cost]
+			end
+			LootTracker_ExportData = LootTracker_ExportData .. "\n"
+		end
+
+		LootTracker_ExportRaidFrameEditBox1:SetFont("Fonts\\FRIZQT__.TTF", "8")
+		LootTracker_ExportRaidFrameEditBox1Left:Hide()
+		LootTracker_ExportRaidFrameEditBox1Middle:Hide()
+		LootTracker_ExportRaidFrameEditBox1Right:Hide()
+		LootTracker_ExportRaidFrameEditBox1:SetText(LootTracker_ExportData)
+		
+		ShowUIPanel(LootTracker_ExportRaidFrame, 1)
+	end
 end
 
 ---------------------------------------------------------
@@ -582,6 +659,22 @@ function LootTracker_ListButton_OnLeave()
 	LootTracker_Tooltip:Hide()	
 end
 
+function LootTracker_ExportButton_OnClick()
+	raidid = getglobal("LootTracker_RaidIDBox"):GetText()
+	
+	--LootTracker_ExportRaid(raidid, LootTrackerOptions["timestamp"], LootTrackerOptions["cost"])
+
+	if LootTrackerOptions["timestamp"] == false and LootTrackerOptions["cost"] == false then
+		LootTracker_ExportRaid(raidid, false, false)
+	elseif LootTrackerOptions["timestamp"] == false and LootTrackerOptions["cost"] == true then
+		LootTracker_ExportRaid(raidid, false, true)
+	elseif LootTrackerOptions["timestamp"] == true and LootTrackerOptions["cost"] == false then
+		LootTracker_ExportRaid(raidid, true, false)
+	elseif LootTrackerOptions["timestamp"] ==  true and LootTrackerOptions["cost"] == true then
+		LootTracker_ExportRaid(raidid, true, true)
+	end
+end
+
 ---------------------------------------------------------
 --LootTracker RaidID Browse Frame Functions
 ---------------------------------------------------------
@@ -761,6 +854,16 @@ function LootTracker_OptionsFrame_OnShow()
 	else
 		getglobal("LootTracker_OptionsFrameOption6"):SetChecked(false)
 	end
+	if LootTrackerOptions["timestamp"] == true then
+		getglobal("LootTracker_OptionsFrameOption7"):SetChecked(true)
+	else
+		getglobal("LootTracker_OptionsFrameOption7"):SetChecked(false)
+	end
+	if LootTrackerOptions["cost"] == true then
+		getglobal("LootTracker_OptionsFrameOption8"):SetChecked(true)
+	else
+		getglobal("LootTracker_OptionsFrameOption8"):SetChecked(false)
+	end
 end
 
 function LootTracker_OptionCheckButton_OnClick(id)
@@ -813,6 +916,18 @@ function LootTracker_OptionCheckButton_OnClick(id)
 			LootTrackerOptions["legendary"] = false
 		else
 			LootTrackerOptions["legendary"] = true
+		end
+	elseif id == 7 then
+		if LootTrackerOptions["timestamp"] == true then
+			LootTrackerOptions["timestamp"] = false
+		else
+			LootTrackerOptions["timestamp"] = true
+		end
+	elseif id == 8 then
+		if LootTrackerOptions["cost"] == true then
+			LootTrackerOptions["cost"] = false
+		else
+			LootTrackerOptions["cost"] = true
 		end
 	end
 end

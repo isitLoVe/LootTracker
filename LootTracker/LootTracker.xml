@@ -811,7 +811,7 @@
 							</Anchor>
 						</Anchors>
 					</Button>
-					<Button name="LootTracker_BrowseCloseButton" inherits="UIPanelButtonTemplate" text="Close">
+					<Button name="LootTracker_ExportButton" inherits="UIPanelButtonTemplate" text="Export">
 						<Size>
 							<AbsDimension x="80" y="22"/>
 						</Size>
@@ -824,7 +824,7 @@
 						</Anchors>
 						<Scripts>
 							<OnClick>
-								HideUIPanel(this:GetParent():GetParent());
+								LootTracker_ExportButton_OnClick()
 							</OnClick>
 						</Scripts>
 					</Button>
@@ -833,7 +833,7 @@
 							<AbsDimension x="80" y="22"/>
 						</Size>
 						<Anchors>
-							<Anchor point="RIGHT" relativeTo="LootTracker_BrowseCloseButton" relativePoint="LEFT">
+							<Anchor point="RIGHT" relativeTo="LootTracker_ExportButton" relativePoint="LEFT">
 								<Offset>
 									<AbsDimension x="0" y="0"/>
 								</Offset>
@@ -1390,7 +1390,7 @@
 	
 	<Frame name="LootTracker_OptionsFrame" frameStrata="DIALOG" toplevel="true" parent="UIParent" movable="false" enableMouse="true" hidden="true" clampedToScreen="true">
 		<Size>
-			<AbsDimension x="250" y="280"/>
+			<AbsDimension x="250" y="350"/>
 		</Size>
 		<Anchors>
 			<Anchor point="CENTER">
@@ -1533,12 +1533,40 @@
 					 </OnLoad>
 				 </Scripts>
 			 </CheckButton>
+			<CheckButton id="7" name="$parentOption7" inherits="LootTracker_OptionCheckButton">
+				 <Anchors> 
+					<Anchor point="TOPLEFT" relativeTo="$parentOption6" relativePoint="BOTTOMLEFT">
+					  <Offset>
+							<AbsDimension x="0" y="0"/>
+						 </Offset>
+					 </Anchor>
+				 </Anchors>      
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Export with timestamps")
+					 </OnLoad>
+				 </Scripts>
+			 </CheckButton>
+			<CheckButton id="8" name="$parentOption8" inherits="LootTracker_OptionCheckButton">
+				 <Anchors> 
+					<Anchor point="TOPLEFT" relativeTo="$parentOption7" relativePoint="BOTTOMLEFT">
+					  <Offset>
+							<AbsDimension x="0" y="0"/>
+						 </Offset>
+					 </Anchor>
+				 </Anchors>      
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Export with GP price")
+					 </OnLoad>
+				 </Scripts>
+			 </CheckButton>
 			<Button name="LootTracker_OptionsReset" inherits="UIPanelButtonTemplate" text="Reset Database">
 				<Size>
 					<AbsDimension x="120" y="22"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentOption6" relativePoint="BOTTOMLEFT">
+					<Anchor point="TOPLEFT" relativeTo="$parentOption8" relativePoint="BOTTOMLEFT">
 						<Offset>
 							<AbsDimension x="0" y="-10"/>
 						</Offset>
@@ -1558,4 +1586,56 @@
 		</Scripts>
 	</Frame>
 
+	<Frame name="LootTracker_ExportRaidFrame" frameStrata="DIALOG" toplevel="true" parent="UIParent" movable="false" enableMouse="true" hidden="true" clampedToScreen="true">
+		<Size>
+			<AbsDimension x="500" y="700"/>
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Layers>
+		</Layers>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border">			<BackgroundInsets>
+				<AbsInset bottom="4" left="4" right="4" top="4"></AbsInset>
+			</BackgroundInsets>
+			<EdgeSize>
+				<AbsValue val="16"></AbsValue>
+			</EdgeSize>
+		</Backdrop>
+		<Frames>
+			<Button inherits="UIPanelCloseButton" name="$parent_CloseButton">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="0" y="0"></AbsDimension>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>LootTracker_ExportRaidFrame:Hide();</OnClick>
+				</Scripts>
+			</Button>
+			<EditBox name="$parentEditBox1" inherits="InputBoxTemplate" multiLine="true" autofocus="false" >
+				<Size>
+					<AbsDimension x="480" y="680"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+						<Offset>
+							<AbsDimension x="10" y="-10"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+				</Scripts>
+			</EditBox>
+		</Frames>
+		<Scripts>
+		</Scripts>
+	</Frame>
+	
 </Ui>
