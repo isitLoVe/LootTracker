@@ -445,7 +445,7 @@ function LootTracker_ExportRaid(raidid, timestamp, cost)
 	LootTracker_ExportData = nil
 	
 	if raidfound == true then
-		LootTracker_ExportData = raidid.."\n\n"
+		LootTracker_ExportData = raidid.."\r\n\r\n"
 		for index in LootTrackerDB[raidid] do
 			if timestamp == true then
 				LootTracker_ExportData = LootTracker_ExportData .. LootTrackerDB[raidid][index][LootTracker_dbfield_timestamp] .. " - "
@@ -462,7 +462,7 @@ function LootTracker_ExportRaid(raidid, timestamp, cost)
 			if cost and LootTrackerDB[raidid][index][LootTracker_dbfield_de] == false then
 				LootTracker_ExportData = LootTracker_ExportData  .. " - " .. LootTrackerDB[raidid][index][LootTracker_dbfield_cost]
 			end
-			LootTracker_ExportData = LootTracker_ExportData .. "\n"
+			LootTracker_ExportData = LootTracker_ExportData .. "\r\n"
 		end
 
 		LootTracker_ExportRaidFrameEditBox1:SetFont("Fonts\\FRIZQT__.TTF", "8")
