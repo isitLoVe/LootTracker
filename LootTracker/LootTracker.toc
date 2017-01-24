@@ -1,6 +1,6 @@
 ## Title: LT - |cffa335eeLootTracker|r
 ## Notes: Tracks Loot with EPGP support
-## Version: 0.9.0
+## Version: 1.0.0
 ## Author: |cff02bf02Luise|r
 ## Interface: 11200
 ## SavedVariables: LootTrackerDB
