@@ -69,6 +69,9 @@ function LootTracker_OnLoad()
 	LootTracker_dbfield_res3 = "res3"
 	LootTracker_dbfield_res4 = "res4"
 	LootTracker_dbfield_res5 = "res5"
+	
+	--Localization
+	LootTrackerLoc_Title = "|cffa335eeLootTracker Browser " ..GetAddOnMetadata("LootTracker", "Version") .. " |r "
 end
 
 function LootTracker_OnEvent()
