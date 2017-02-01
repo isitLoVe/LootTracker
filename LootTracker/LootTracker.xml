@@ -336,7 +336,7 @@
 				</Texture>
 			</Layer>
 			<Layer level="ARTWORK">
-				<FontString name="$parentTitle" inherits="GameFontNormal" text="|cffa335eeLootTracker Browser|r">
+				<FontString name="$parentTitle" inherits="GameFontNormal" text=LootTrackerLoc_Title>
 					<Anchors>
 						<Anchor point="TOP">
 							<Offset>
