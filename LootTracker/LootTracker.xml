@@ -336,11 +336,20 @@
 				</Texture>
 			</Layer>
 			<Layer level="ARTWORK">
-				<FontString name="$parentTitle" inherits="GameFontNormal" text=LootTrackerLoc_Title>
+				<FontString name="$parentTitle" inherits="GameFontNormal" text="LootTrackerLoc_Title">
 					<Anchors>
 						<Anchor point="TOP">
 							<Offset>
 								<AbsDimension x="0" y="-18"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentVersion" inherits="GameFontNormal" text="LootTrackerLoc_Version">
+					<Anchors>
+						<Anchor point="TOPRIGHT">
+							<Offset>
+								<AbsDimension x="-30" y="-18"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
