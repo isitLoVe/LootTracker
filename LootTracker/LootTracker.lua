@@ -116,7 +116,7 @@ function LootTracker_OnEvent()
 				LootTracker_AddtoDB (playername, itemname, itemid, rarity)
 			elseif rarityhex == LootTracker_color_legendary and LootTrackerOptions["legendary"] == true then
 				rarity = "legendary"
-				LootTracker_AddtoDB (playername, itemname, itemid, rarity)
+				LootTracker_AddtoDB (playername, itemname, tostring(itemid), rarity)
 			end
 		end
 	end
@@ -350,12 +350,12 @@ function LootTracker_AddtoDB(playername, itemname, itemid, rarity, offspec, de)
 			LootTrackerDB[raidid][1][LootTracker_dbfield_timestamp] = timestamp_detail
 			LootTrackerDB[raidid][1][LootTracker_dbfield_zone] = zonename
 			if oldplayergp then
-				LootTrackerDB[raidid][1][LootTracker_dbfield_oldplayergp] = oldplayergp
+				LootTrackerDB[raidid][1][LootTracker_dbfield_oldplayergp] = tostring(oldplayergp)
 			else
 				LootTrackerDB[raidid][1][LootTracker_dbfield_oldplayergp] = "0"
 			end
 			if cost then 
-				LootTrackerDB[raidid][1][LootTracker_dbfield_cost] = cost
+				LootTrackerDB[raidid][1][LootTracker_dbfield_cost] = tostring(cost)
 			else
 				LootTrackerDB[raidid][1][LootTracker_dbfield_cost] = "0"
 			end
@@ -363,7 +363,7 @@ function LootTracker_AddtoDB(playername, itemname, itemid, rarity, offspec, de)
 				LootTrackerDB[raidid][1][LootTracker_dbfield_newplayergp] = tostring(oldplayergp+cost)
 			else
 				if oldplayergp then
-					LootTrackerDB[raidid][1][LootTracker_dbfield_newplayergp] = oldplayergp
+					LootTrackerDB[raidid][1][LootTracker_dbfield_newplayergp] = tostring(oldplayergp)
 				else
 					LootTrackerDB[raidid][1][LootTracker_dbfield_newplayergp] = "0"
 				end
@@ -392,12 +392,12 @@ function LootTracker_AddtoDB(playername, itemname, itemid, rarity, offspec, de)
 			LootTrackerDB[raidid][lootid][LootTracker_dbfield_timestamp] = timestamp_detail
 			LootTrackerDB[raidid][lootid][LootTracker_dbfield_zone] = zonename
 			if oldplayergp then
-				LootTrackerDB[raidid][lootid][LootTracker_dbfield_oldplayergp] = oldplayergp
+				LootTrackerDB[raidid][lootid][LootTracker_dbfield_oldplayergp] = tostring(oldplayergp)
 			else
 				LootTrackerDB[raidid][lootid][LootTracker_dbfield_oldplayergp] = "0"
 			end
 			if cost then 
-				LootTrackerDB[raidid][lootid][LootTracker_dbfield_cost] = cost
+				LootTrackerDB[raidid][lootid][LootTracker_dbfield_cost] = tostring(cost)
 			else
 				LootTrackerDB[raidid][lootid][LootTracker_dbfield_cost] = "0"
 			end
@@ -405,7 +405,7 @@ function LootTracker_AddtoDB(playername, itemname, itemid, rarity, offspec, de)
 				LootTrackerDB[raidid][lootid][LootTracker_dbfield_newplayergp] = tostring(oldplayergp+cost)
 			else
 				if oldplayergp then
-					LootTrackerDB[raidid][lootid][LootTracker_dbfield_newplayergp] = oldplayergp
+					LootTrackerDB[raidid][lootid][LootTracker_dbfield_newplayergp] = tostring(oldplayergp)
 				else
 					LootTrackerDB[raidid][lootid][LootTracker_dbfield_newplayergp] = "0"
 				end
@@ -510,7 +510,7 @@ function LootTracker_RaidIDButton_OnClick()
 	end
 end
 
-function LootTracker_ListScrollFrame_Update()
+function LootTracker_BuildBrowseTable()
 	LootTracker_BrowseTable = {}
 	--read ReadSearch editbox
 	raidid = getglobal("LootTracker_RaidIDBox"):GetText()
@@ -547,6 +547,10 @@ function LootTracker_ListScrollFrame_Update()
 			browse_itemlink = "|c" .. browse_rarityhexlink .. "|Hitem:" .. LootTrackerDB[raidid][index][LootTracker_dbfield_itemid] .. ":0:0:0|h[" .. LootTrackerDB[raidid][index][LootTracker_dbfield_itemname] .. "]|h|r"
 			
 			LootTracker_BrowseTable[index].itemname = browse_itemlink
+			-- for sorting
+			LootTracker_BrowseTable[index].itemnamenolink = LootTrackerDB[raidid][index][LootTracker_dbfield_itemname]
+			
+			--rest
 			LootTracker_BrowseTable[index].cost = LootTrackerDB[raidid][index][LootTracker_dbfield_cost]
 			LootTracker_BrowseTable[index].offspec = LootTrackerDB[raidid][index][LootTracker_dbfield_offspec]
 			LootTracker_BrowseTable[index].de = LootTrackerDB[raidid][index][LootTracker_dbfield_de]
@@ -556,83 +560,181 @@ function LootTracker_ListScrollFrame_Update()
 			LootTracker_BrowseTable[index].oldplayergp = LootTrackerDB[raidid][index][LootTracker_dbfield_oldplayergp]
 			LootTracker_BrowseTable[index].newplayergp = LootTrackerDB[raidid][index][LootTracker_dbfield_newplayergp]
 			LootTracker_BrowseTable[index].raidid = raidid
+			LootTracker_BrowseTable[index].originalindex = index
 		end
 	
+		--sorting
+				DEFAULT_CHAT_FRAME:AddMessage(tostring(sortdirection))
+				DEFAULT_CHAT_FRAME:AddMessage(tostring(sortfield))
 		
-		--set GUI Total Loots (per Raid)
-		local maxlines = getn(LootTracker_BrowseTable)
-		getglobal("LootTracker_TotalLootText"):SetText("Raid: " .. raidid .. ":")
-		if maxlines == 1 then
-			getglobal("LootTracker_TotalLootTextValue"):SetText(maxlines .. " item")
+		
+		if sortfield == LootTracker_dbfield_timestamp then
+			if sortdirection == "ascending" then
+				table.sort(LootTracker_BrowseTable, function(a,b) return a.timestamp < b.timestamp end)
+			elseif sortdirection == "descending" then
+				table.sort(LootTracker_BrowseTable, function(a,b) return a.timestamp > b.timestamp end)
+			end
+		elseif sortfield == LootTracker_dbfield_playername then
+			if sortdirection == "ascending" then
+				table.sort(LootTracker_BrowseTable, function(a,b) return a.playername < b.playername end)
+			elseif sortdirection == "descending" then
+				table.sort(LootTracker_BrowseTable, function(a,b) return a.playername > b.playername end)
+			end
+		elseif sortfield == LootTracker_dbfield_itemname then
+			if sortdirection == "ascending" then
+				table.sort(LootTracker_BrowseTable, function(a,b) return a.itemnamenolink < b.itemnamenolink end)
+			elseif sortdirection == "descending" then
+				table.sort(LootTracker_BrowseTable, function(a,b) return a.itemnamenolink > b.itemnamenolink end)
+			end
+		elseif sortfield == LootTracker_dbfield_cost then
+			if sortdirection == "ascending" then
+				table.sort(LootTracker_BrowseTable, function(a,b) return tonumber(a.cost) < tonumber(b.cost) end)
+			elseif sortdirection == "descending" then
+				table.sort(LootTracker_BrowseTable, function(a,b) return tonumber(a.cost) > tonumber(b.cost) end)
+			end
+		elseif sortfield == LootTracker_dbfield_offspec then
+			if sortdirection == "ascending" then
+				table.sort(LootTracker_BrowseTable, function(a,b) return tostring(a.offspec) < tostring(b.offspec) end)
+			elseif sortdirection == "descending" then
+			table.sort(LootTracker_BrowseTable, function(a,b) return tostring(a.offspec) > tostring(b.offspec) end)
+			end
+		elseif sortfield == LootTracker_dbfield_de then
+			if sortdirection == "ascending" then
+				table.sort(LootTracker_BrowseTable, function(a,b) return tostring(a.de) < tostring(b.de) end)
+			elseif sortdirection == "descending" then
+				table.sort(LootTracker_BrowseTable, function(a,b) return tostring(a.de) > tostring(b.de) end)
+			end
 		else
-			getglobal("LootTracker_TotalLootTextValue"):SetText(maxlines .. " items")
+			table.sort(LootTracker_BrowseTable, function(a,b) return a.timestamp < b.timestamp end)
 		end
 		
-		
-		local line; -- 1 through 20 of our window to scroll
-		local lineplusoffset; -- an index into our data calculated from the scroll offset
-	   
-		 -- maxlines is max entries, 1 is number of lines, 16 is pixel height of each line
-		FauxScrollFrame_Update(LootTracker_ListScrollFrame, maxlines, 1, 16)
-
-
-		for line=1,20 do
-			 lineplusoffset = line + FauxScrollFrame_GetOffset(LootTracker_ListScrollFrame);
-			 if lineplusoffset <= maxlines then
-				getglobal("LootTracker_List"..line.."TextTimestamp"):SetText(LootTracker_BrowseTable[lineplusoffset].timestamp)
-				getglobal("LootTracker_List"..line.."TextPlayername"):SetText(LootTracker_BrowseTable[lineplusoffset].playername)
-				getglobal("LootTracker_List"..line.."TextItemName"):SetText(LootTracker_BrowseTable[lineplusoffset].itemname)
-				getglobal("LootTracker_List"..line.."TextCost"):SetText(LootTracker_BrowseTable[lineplusoffset].cost)
-				
-				if LootTracker_BrowseTable[lineplusoffset].offspec == true then
-					getglobal("LootTracker_List"..line.."TextOffspec"):SetText("yes")
-				else
-					getglobal("LootTracker_List"..line.."TextOffspec"):SetText("no")
-				end
-				
-				if LootTracker_BrowseTable[lineplusoffset].de == true then 
-					getglobal("LootTracker_List"..line.."TextDE"):SetText("yes")
-				else
-					getglobal("LootTracker_List"..line.."TextDE"):SetText("no")
-				end
-				
-				getglobal("LootTracker_List"..line):Show()
-			 else
-				getglobal("LootTracker_List"..line):Hide()
-			 end
-	   end
+		--call for GUI Update
+		LootTracker_ListScrollFrame_Update()
+	
 	else
 		getglobal("LootTracker_TotalLootText"):SetText("no Raid found: " .. raidid)
 		getglobal("LootTracker_TotalLootTextValue"):SetText("0 items")
 	end
 end
 
+function LootTracker_ListScrollFrame_Update()
+	--set GUI Total Loots (per Raid)
+	if not LootTracker_BrowseTable then 
+		LootTracker_BrowseTable = {}
+	end
+	
+	if not raidid then
+		raidid = getglobal("LootTracker_RaidIDBox"):GetText()
+	end
+	
+	local maxlines = getn(LootTracker_BrowseTable)
+	getglobal("LootTracker_TotalLootText"):SetText("Raid: " .. raidid .. ":")
+	if maxlines == 1 then
+		getglobal("LootTracker_TotalLootTextValue"):SetText(maxlines .. " item")
+	else
+		getglobal("LootTracker_TotalLootTextValue"):SetText(maxlines .. " items")
+	end
+	
+	
+	local line; -- 1 through 20 of our window to scroll
+	local lineplusoffset; -- an index into our data calculated from the scroll offset
+   
+	 -- maxlines is max entries, 1 is number of lines, 16 is pixel height of each line
+	FauxScrollFrame_Update(LootTracker_ListScrollFrame, maxlines, 1, 16)
+
+
+	for line=1,20 do
+		 lineplusoffset = line + FauxScrollFrame_GetOffset(LootTracker_ListScrollFrame);
+		 if lineplusoffset <= maxlines then
+			getglobal("LootTracker_List"..line.."TextTimestamp"):SetText(LootTracker_BrowseTable[lineplusoffset].timestamp)
+			getglobal("LootTracker_List"..line.."TextPlayername"):SetText(LootTracker_BrowseTable[lineplusoffset].playername)
+			getglobal("LootTracker_List"..line.."TextItemName"):SetText(LootTracker_BrowseTable[lineplusoffset].itemname)
+			getglobal("LootTracker_List"..line.."TextCost"):SetText(LootTracker_BrowseTable[lineplusoffset].cost)
+			
+			if LootTracker_BrowseTable[lineplusoffset].offspec == true then
+				getglobal("LootTracker_List"..line.."TextOffspec"):SetText("yes")
+			else
+				getglobal("LootTracker_List"..line.."TextOffspec"):SetText("no")
+			end
+			
+			if LootTracker_BrowseTable[lineplusoffset].de == true then 
+				getglobal("LootTracker_List"..line.."TextDE"):SetText("yes")
+			else
+				getglobal("LootTracker_List"..line.."TextDE"):SetText("no")
+			end
+			
+			getglobal("LootTracker_List"..line):Show()
+		 else
+			getglobal("LootTracker_List"..line):Hide()
+		 end
+   end
+end
+
 --fires when the headline in the browse frame list is clicked
 function LootTracker_SortTimestamp_OnClick(button)
-	--table.sort(LootTracker_BrowseTable, )
-	--LootTracker_ListScrollFrame_Update()
-	
-	 DEFAULT_CHAT_FRAME:AddMessage("sorting not yet supported")
+	if sortfield == LootTracker_dbfield_timestamp and sortdirection == "ascending" then
+		sortfield = LootTracker_dbfield_timestamp
+		sortdirection = "descending"
+	else
+		sortfield = LootTracker_dbfield_timestamp
+		sortdirection = "ascending"
+	end
+	LootTracker_BuildBrowseTable()
 end
 
 function LootTracker_SortPlayername_OnClick(button)
-	 DEFAULT_CHAT_FRAME:AddMessage("sorting not yet supported")
+	if 	sortfield == LootTracker_dbfield_playername and sortdirection == "ascending" then
+		sortfield = LootTracker_dbfield_playername
+		sortdirection = "descending"
+	else
+		sortfield = LootTracker_dbfield_playername
+		sortdirection = "ascending"
+	end
+	LootTracker_BuildBrowseTable()
 end
 
 function LootTracker_SortItemName_OnClick(button)
-	 DEFAULT_CHAT_FRAME:AddMessage("sorting not yet supported")
+	if 	sortfield == LootTracker_dbfield_itemname and sortdirection == "ascending" then
+	sortfield = LootTracker_dbfield_itemname
+		sortdirection = "descending"
+	else
+	sortfield = LootTracker_dbfield_itemname
+		sortdirection = "ascending"
+	end
+	LootTracker_BuildBrowseTable()
 end
 
 function LootTracker_SortCost_OnClick(button)
-	 DEFAULT_CHAT_FRAME:AddMessage("sorting not yet supported")
+	if 	sortfield == LootTracker_dbfield_cost and sortdirection == "ascending" then
+		sortfield = LootTracker_dbfield_cost
+		sortdirection = "descending"
+	else
+		sortfield = LootTracker_dbfield_cost
+		sortdirection = "ascending"
+	end
+	LootTracker_BuildBrowseTable()
 end
 
 function LootTracker_SortOffspec_OnClick(button)
-	 DEFAULT_CHAT_FRAME:AddMessage("sorting not yet supported")
+	if 	sortfield == LootTracker_dbfield_offspec and sortdirection == "ascending" then
+		sortfield = LootTracker_dbfield_offspec
+		sortdirection = "descending"
+	else
+		sortfield = LootTracker_dbfield_offspec
+		sortdirection = "ascending"
+	end
+	LootTracker_BuildBrowseTable()
 end
 
 function LootTracker_SortDE_OnClick(button)
-	 DEFAULT_CHAT_FRAME:AddMessage("sorting not yet supported")
+	if 	sortfield == LootTracker_dbfield_de and sortdirection == "ascending" then
+		sortfield = LootTracker_dbfield_de
+		sortdirection = "descending"
+	else
+		sortfield = LootTracker_dbfield_de
+		sortdirection = "ascending"
+	end
+	LootTracker_BuildBrowseTable()
 end
 
 --fires when a line in the browse frame list is clicked
@@ -690,7 +792,7 @@ function LootTracker_RaidIDListButton_OnClick()
 	getglobal("LootTracker_RaidIDBox"):SetText(raidid_browse)
 	
 	HideUIPanel(LootTracker_RaidIDFrame, 1)
-	LootTracker_ListScrollFrame_Update()
+	LootTracker_BuildBrowseTable()
 	
 end
 
@@ -752,6 +854,7 @@ function LootTracker_ItemEdit(index)
 	LootTracker_ItemEditDB = {
 	raidid = LootTracker_BrowseTable[index].raidid,
 	index = index,
+	originalindex = LootTracker_BrowseTable[index].originalindex,
 	timestamp = LootTracker_BrowseTable[index].timestamp,
 	itemname = LootTracker_BrowseTable[index].itemname,
 	itemid = LootTracker_BrowseTable[index].itemid,
@@ -768,41 +871,51 @@ end
 function LootTracker_ItemEditCheckButton_OnClick(id)
 	--offspec
 	if id == 1 then
-		if LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_offspec] == true then
+		if LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_offspec] == true then
 		
-			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_offspec]	= false
-			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost] = LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost]*2
-			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_newplayergp] = LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_oldplayergp] + LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost]
-
-		elseif LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_offspec] == false then
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_offspec]	= false
+			--DEFAULT_CHAT_FRAME:AddMessage(LootTracker_ItemEditDB.raidid)
+			--DEFAULT_CHAT_FRAME:AddMessage(LootTracker_ItemEditDB.index)
+			--DEFAULT_CHAT_FRAME:AddMessage(LootTracker_ItemEditDB.itemname)
+			--DEFAULT_CHAT_FRAME:AddMessage(LootTracker_ItemEditDB.originalindex)
 			
-			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_offspec]	= true
-			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost] = LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost]/2
-			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_newplayergp] = LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_oldplayergp] + LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost]
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_cost] = LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_cost]*2
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_newplayergp] = LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_oldplayergp] + LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_cost]
+
+		elseif LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_offspec] == false then
+			
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_offspec]	= true
+			--DEFAULT_CHAT_FRAME:AddMessage(LootTracker_ItemEditDB.raidid)
+			--DEFAULT_CHAT_FRAME:AddMessage(LootTracker_ItemEditDB.index)
+			--DEFAULT_CHAT_FRAME:AddMessage(LootTracker_ItemEditDB.itemname)
+			--DEFAULT_CHAT_FRAME:AddMessage(LootTracker_ItemEditDB.originalindex)
+			
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_cost] = LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_cost]/2
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_newplayergp] = LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_oldplayergp] + LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_cost]
 		end
 	--disenchant
 	elseif id == 2 then
-		if LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_de] == true then
+		if LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_de] == true then
 		
 			--recalc costs
 			cost_orig = LootTracker_GetCosts(LootTracker_ItemEditDB.itemid)
 			
-			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_de]	= false
-			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost] = cost_orig
-			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_newplayergp] = LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_oldplayergp] + LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost]
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_de]	= false
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_cost] = cost_orig
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_newplayergp] = LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_oldplayergp] + LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_cost]
 		
-		elseif LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_de] == false then
+		elseif LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_de] == false then
 			
-			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_de]	= true
-			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost] = 0
-			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_newplayergp] = LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_oldplayergp] + LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost]
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_de]	= true
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_cost] = "0"
+			LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_newplayergp] = LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_oldplayergp] + LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_cost]
 		end
 	end
 	
-	getglobal("LootTracker_ItemEditFrameOldPlayerGP"):SetText(LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_oldplayergp])
-	getglobal("LootTracker_ItemEditFrameCost"):SetText(LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_cost])
-	getglobal("LootTracker_ItemEditFrameNewPlayerGP"):SetText(LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.index][LootTracker_dbfield_newplayergp])
-	LootTracker_ListScrollFrame_Update()
+	getglobal("LootTracker_ItemEditFrameOldPlayerGP"):SetText(LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_oldplayergp])
+	getglobal("LootTracker_ItemEditFrameCost"):SetText(LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_cost])
+	getglobal("LootTracker_ItemEditFrameNewPlayerGP"):SetText(LootTrackerDB[LootTracker_ItemEditDB.raidid][LootTracker_ItemEditDB.originalindex][LootTracker_dbfield_newplayergp])
+	LootTracker_BuildBrowseTable()
 end
 		
 
@@ -939,5 +1052,5 @@ end
 function LootTracker_OptionsReset_OnClick() 
 	LootTracker_ResetDB()
 	LootTracker_RaidIDScrollFrame_Update()
-	LootTracker_ListScrollFrame_Update()
+	LootTracker_BuildBrowseTable()
 end

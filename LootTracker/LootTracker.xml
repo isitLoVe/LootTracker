@@ -473,7 +473,7 @@
 					<OnTabPressed>
 					</OnTabPressed>
 					<OnEnterPressed>
-						LootTracker_ListScrollFrame_Update()
+						LootTracker_BuildBrowseTable()
 						this:ClearFocus();
 					</OnEnterPressed>
 				</Scripts>
@@ -850,7 +850,7 @@
 						</Anchors>
 						<Scripts>
 							<OnClick>
-								LootTracker_ListScrollFrame_Update();
+								LootTracker_BuildBrowseTable();
 							</OnClick>
 						</Scripts>
 					</Button>
@@ -1014,7 +1014,7 @@
 								</Anchors>
 								<Scripts>
 									<OnClick>
-										LootTracker_SortCost_OnClick(arg1);
+										LootTracker_SortDE_OnClick(arg1);
 									</OnClick>
 								</Scripts>
 							</Button>						
