@@ -564,10 +564,6 @@ function LootTracker_BuildBrowseTable()
 		end
 	
 		--sorting
-				DEFAULT_CHAT_FRAME:AddMessage(tostring(sortdirection))
-				DEFAULT_CHAT_FRAME:AddMessage(tostring(sortfield))
-		
-		
 		if sortfield == LootTracker_dbfield_timestamp then
 			if sortdirection == "ascending" then
 				table.sort(LootTracker_BrowseTable, function(a,b) return a.timestamp < b.timestamp end)
