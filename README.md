@@ -16,15 +16,16 @@ Set your desired tracking level and export options
 
 ![Options](http://i.imgur.com/3yPSkCj.jpg "Options")
 
-### item Edit
+### Item Edit 
+Right Click on the item to edit it
 Set Offspec (half price) or dissenchant (no gp)
 
 ![Item edit](http://i.imgur.com/1zmQS4r.jpg "Item edit")
 
-### basic export
+### Basic Export
 ![Export](http://i.imgur.com/Qf9ECzS.jpg "Export")
 
-### detailed export
+### Detailed Export
 export with timestamp and gp price
 use CTRL+C to copy all and paste it on your guilds homepage
 
