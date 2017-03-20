@@ -6,8 +6,13 @@ local LootTrackerOptions_DefaultSettings = {
 	epic = true,
 	legendary = true,
 	timestamp = false,
-	cost = false
+	cost = false,
 }
+
+local LootTrackerBlacklist_DefaultSettings = {
+		"Nexus Crystal"
+	}
+
 
 ---------------------------------------------------------
 --LootTracker Global Functions
@@ -15,12 +20,22 @@ local LootTrackerOptions_DefaultSettings = {
 
 local function LootTracker_Initialize()
 	if not LootTrackerOptions  then
-		LootTrackerOptions = {};
+		LootTrackerOptions = {}
 	end
 
 	for i in LootTrackerOptions_DefaultSettings do
 		if (LootTrackerOptions[i] == nil) then
 			LootTrackerOptions[i] = LootTrackerOptions_DefaultSettings[i]
+		end
+	end
+	
+	if not LootTrackerBlacklist  then
+		LootTrackerBlacklist = {}
+	end
+
+	for i in LootTrackerBlacklist_DefaultSettings do
+		if (LootTrackerBlacklist[i] == nil) then
+			LootTrackerBlacklist[i] = LootTrackerBlacklist_DefaultSettings[i]
 		end
 	end
 end
@@ -100,26 +115,40 @@ function LootTracker_OnEvent()
 
 			--extract rarity
 			local _, _, _, rarityhex = string.find(arg1, LootTracker_pattern_rarityhex)
+			
+			--check if item is on the blacklist
+			if not LootTracker_CheckBlacklist(itemname) then
 
-			--check rarity and add itemname to db
-			if rarityhex == LootTracker_color_common and LootTrackerOptions["common"] == true then
-				rarity = "common"
-				LootTracker_AddtoDB (playername, itemname, itemid, rarity)
-			elseif rarityhex == LootTracker_color_uncommon and LootTrackerOptions["uncommon"] == true then
-				rarity = "uncommon"
-				LootTracker_AddtoDB (playername, itemname, itemid, rarity)
-			elseif rarityhex == LootTracker_color_rare and LootTrackerOptions["rare"] == true then
-				rarity = "rare"
-				LootTracker_AddtoDB (playername, itemname, itemid, rarity)
-			elseif rarityhex == LootTracker_color_epic and LootTrackerOptions["epic"] == true then
-				rarity = "epic"
-				LootTracker_AddtoDB (playername, itemname, itemid, rarity)
-			elseif rarityhex == LootTracker_color_legendary and LootTrackerOptions["legendary"] == true then
-				rarity = "legendary"
-				LootTracker_AddtoDB (playername, itemname, tostring(itemid), rarity)
+				--check rarity and add itemname to db
+				if rarityhex == LootTracker_color_common and LootTrackerOptions["common"] == true then
+					rarity = "common"
+					LootTracker_AddtoDB (playername, itemname, itemid, rarity)
+				elseif rarityhex == LootTracker_color_uncommon and LootTrackerOptions["uncommon"] == true then
+					rarity = "uncommon"
+					LootTracker_AddtoDB (playername, itemname, itemid, rarity)
+				elseif rarityhex == LootTracker_color_rare and LootTrackerOptions["rare"] == true then
+					rarity = "rare"
+					LootTracker_AddtoDB (playername, itemname, itemid, rarity)
+				elseif rarityhex == LootTracker_color_epic and LootTrackerOptions["epic"] == true then
+					rarity = "epic"
+					LootTracker_AddtoDB (playername, itemname, itemid, rarity)
+				elseif rarityhex == LootTracker_color_legendary and LootTrackerOptions["legendary"] == true then
+					rarity = "legendary"
+					LootTracker_AddtoDB (playername, itemname, tostring(itemid), rarity)
+				end
 			end
 		end
 	end
+end
+
+function LootTracker_CheckBlacklist(itemname)
+	for k,v in ipairs(LootTrackerBlacklist) do
+		if itemname == v then
+			DEFAULT_CHAT_FRAME:AddMessage("true")
+			return true
+		end
+	end
+	return false
 end
 
 function LootTracker_SlashCommand(msg)
@@ -432,6 +461,8 @@ end
 
 function LootTracker_ResetDB()
 	LootTrackerDB = {}
+	LootTracker_RaidIDScrollFrame_Update()
+	LootTracker_BuildBrowseTable()
 	DEFAULT_CHAT_FRAME:AddMessage("Loot Database has been reset")
 end
 
@@ -1047,6 +1078,4 @@ end
 
 function LootTracker_OptionsReset_OnClick() 
 	LootTracker_ResetDB()
-	LootTracker_RaidIDScrollFrame_Update()
-	LootTracker_BuildBrowseTable()
 end
