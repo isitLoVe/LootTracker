@@ -144,7 +144,6 @@ end
 function LootTracker_CheckBlacklist(itemname)
 	for k,v in ipairs(LootTrackerBlacklist) do
 		if itemname == v then
-			DEFAULT_CHAT_FRAME:AddMessage("true")
 			return true
 		end
 	end
