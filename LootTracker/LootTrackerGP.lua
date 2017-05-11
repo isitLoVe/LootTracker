@@ -117,6 +117,35 @@ Item22351 = "148"; --T3 Chest Token
 Item22350 = "148"; --T3 Chest Token
 Item22349 = "148"; --T3 Chest Token
 
+Item23050 = "160"; --Cloak of the Necropolis
+Item23045 = "160"; --Shroud of Dominion 
+Item23043 = "150"; --The Face of Death
+Item23242 = "180"; --Claw of the Frost Wyrm 
+Item23049 = "160"; --Sapphiron's Left Eye 
+Item23048 = "160"; --Sapphiron's Right Eye
+Item23040 = "160"; --Glyph of Deflection
+Item23047 = "160"; --Eye of the Dead
+Item23046 = "160"; --The Restrained Essence of Sapphiron
+Item23041 = "160"; --Slayer's Crest 
+Item23548 = "80"; --Might of the Scourge
+Item23545 = "80"; --Power of the Scourge
+Item23547 = "80"; --Resilience of the Scourge
+Item23549 = "120"; --Fortitude of the Scourge
+
+Item22802 = "200"; --Kingsfall
+Item23054 = "200"; --Gressil, Dawn of Ruin
+Item23577 = "200"; --The Hungering Cold 
+Item23056 = "240"; --Hammer of the Twisting Nether
+Item22798 = "300"; --Might of Menethil
+Item22799 = "300"; --Soulseeker 
+Item22821 = "116"; --Doomfinger 
+Item22812 = "300"; --Nerubian Slavemaker
+Item22819 = "180"; --Shield of Condemnation 
+Item23057 = "140"; --Gem of Trapped Innocents 
+Item23053 = "140"; --Stormrage's Talisman of Seething 
+Item22520 = "0"; --The Phylactery of Kel'Thuzad 
+Item22733 = "400"; --Staff Head of Atiesh
+
 Item22490 = "120"; --Dreamwalker Raiment
 Item22491 = "100"; --Dreamwalker Raiment
 Item22488 = "148"; --Dreamwalker Raiment
