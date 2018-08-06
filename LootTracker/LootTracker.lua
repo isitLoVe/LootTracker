@@ -154,7 +154,7 @@ function LootTracker_SlashCommand(msg)
 
 	if msg == "help" then
 		DEFAULT_CHAT_FRAME:AddMessage("LootTracker usage:")
-		DEFAULT_CHAT_FRAME:AddMessage("/lt or /loottracker { help |  enable | disable | toggle | show | options | reset | uncommon | common | rare | epic | legendary | timestamp | cost}")
+		DEFAULT_CHAT_FRAME:AddMessage("/lt or /loottracker { help |  enable | disable | toggle | show | options | reset | uncommon | common | rare | epic | legendary | timestamp | cost }")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9help|r: prints out this help")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9enable|r: enables loot tracking")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9disable|r: disables loot tracking")
@@ -169,6 +169,7 @@ function LootTracker_SlashCommand(msg)
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9legendary|r: toggles tracking legendary loot")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9timestamp|r: toggles exporting with timestamps")
 		DEFAULT_CHAT_FRAME:AddMessage(" - |cff9482c9cost|r: toggles exporting with GP price")
+		DEFAULT_CHAT_FRAME:AddMessage("CTRL+Click on Export to export in parseable format")
 	elseif msg == "toggle" then 
 		if LootTrackerOptions["enabled"] == true then
 			LootTrackerOptions["enabled"] = false
@@ -509,6 +510,73 @@ function LootTracker_ExportRaid(raidid, timestamp, cost)
 	end
 end
 
+function LootTracker_ExportRaidPucchini(raidid)
+	--check raidid
+	raidfound = false
+	if raidid and (string.len(raidid) >= 1) then
+		for k in pairs(LootTrackerDB) do
+			if k == raidid then
+				raidfound = true
+			end
+		end
+	end
+	
+	LootTracker_ExportData = nil
+	
+	if raidfound == true then
+		--Header 
+		LootTracker_ExportData = "raidid,timestamp,itemname,playername,cost,offspec,disenchanted\r\n"
+		for index in LootTrackerDB[raidid] do
+				--Raid ID
+			LootTracker_ExportData = LootTracker_ExportData .. raidid
+
+			--timestamp
+			LootTracker_ExportData = LootTracker_ExportData ..  "," .. LootTrackerDB[raidid][index][LootTracker_dbfield_timestamp]
+			
+			--itemname
+			LootTracker_ExportData = LootTracker_ExportData  ..  ",\"" .. LootTrackerDB[raidid][index][LootTracker_dbfield_itemname] .."\""
+			
+			--playername or disenchanted
+			if LootTrackerDB[raidid][index][LootTracker_dbfield_de] == true then
+				LootTracker_ExportData = LootTracker_ExportData .. ",disenchanted"
+			else
+				LootTracker_ExportData = LootTracker_ExportData  .. ",\"" .. LootTrackerDB[raidid][index][LootTracker_dbfield_playername] .."\""
+			end
+			
+			--cost
+			if LootTrackerDB[raidid][index][LootTracker_dbfield_de] == false then
+				LootTracker_ExportData = LootTracker_ExportData  .. "," .. LootTrackerDB[raidid][index][LootTracker_dbfield_cost]
+			else
+				LootTracker_ExportData = LootTracker_ExportData  .. ",0"
+			end
+			
+			--offspec
+			if LootTrackerDB[raidid][index][LootTracker_dbfield_offspec] == true then
+				LootTracker_ExportData = LootTracker_ExportData .. ",true"
+			else
+				LootTracker_ExportData = LootTracker_ExportData .. ",false"
+			end
+			
+			--disenchanted
+			if LootTrackerDB[raidid][index][LootTracker_dbfield_de] == true then
+				LootTracker_ExportData = LootTracker_ExportData .. ",true"
+			else
+				LootTracker_ExportData = LootTracker_ExportData  .. ",false"
+			end
+			
+			LootTracker_ExportData = LootTracker_ExportData .. "\r\n"
+		end
+
+		LootTracker_ExportRaidFrameEditBox1:SetFont("Fonts\\FRIZQT__.TTF", "8")
+		LootTracker_ExportRaidFrameEditBox1Left:Hide()
+		LootTracker_ExportRaidFrameEditBox1Middle:Hide()
+		LootTracker_ExportRaidFrameEditBox1Right:Hide()
+		LootTracker_ExportRaidFrameEditBox1:SetText(LootTracker_ExportData)
+		
+		ShowUIPanel(LootTracker_ExportRaidFrame, 1)
+	end
+end
+
 ---------------------------------------------------------
 --LootTracker ItemBrowse Frame Functions
 ---------------------------------------------------------
@@ -795,8 +863,12 @@ function LootTracker_ExportButton_OnClick()
 	raidid = getglobal("LootTracker_RaidIDBox"):GetText()
 	
 	--LootTracker_ExportRaid(raidid, LootTrackerOptions["timestamp"], LootTrackerOptions["cost"])
+	
+	
 
-	if LootTrackerOptions["timestamp"] == false and LootTrackerOptions["cost"] == false then
+	if IsControlKeyDown() then
+		LootTracker_ExportRaidPucchini(raidid)
+	elseif LootTrackerOptions["timestamp"] == false and LootTrackerOptions["cost"] == false then
 		LootTracker_ExportRaid(raidid, false, false)
 	elseif LootTrackerOptions["timestamp"] == false and LootTrackerOptions["cost"] == true then
 		LootTracker_ExportRaid(raidid, false, true)

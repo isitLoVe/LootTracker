@@ -28,6 +28,7 @@ Set Offspec (half price) or dissenchant (no gp)
 ### Detailed Export
 export with timestamp and gp price
 use CTRL+C to copy all and paste it on your guilds homepage
+new in 1.3.2 CTRL+Click on Export to export data in csv format
 
 ![Detailed Export](http://i.imgur.com/ZG8POmH.jpg "Detailed Export")
 
